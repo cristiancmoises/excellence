@@ -1,91 +1,55 @@
 # Excellence
 
-**Planilhas livres, célula por célula.** Símbolo de troféu, licença MIT e seus dados na sua infraestrutura.
+Excellence is a self-hosted spreadsheet application with a familiar command bar, formulas, private workbooks, revision history, XLSX/CSV import and export, charts, and an optional local spreadsheet assistant. The interface is in Portuguese. [Documentação em português](README.pt-BR.md).
 
-Versão **0.1.0-rc.1**. Aplicativo funcional para homologação. Não é uma implementação integral do Microsoft Excel. Veja [compatibilidade](docs/COMPATIBILITY.md) e [validação](docs/VALIDATION.md) antes de adotar em produção.
+Visit [exc.securityops.co](https://exc.securityops.co) or [try the demo](https://exc.securityops.co/demo). The [Brazilian domain](https://exc.securityops.com.br) redirects to the primary origin.
 
-**Acessar:** [exc.securityops.co](https://exc.securityops.co) · [exc.securityops.com.br](https://exc.securityops.com.br) (redirecionamento para a origem principal). [English documentation](README.en.md).
+![Excellence spreadsheet workspace](docs/screenshots/excellence-desktop.png)
 
-## Começar em 1 comando
+The public demo starts with a sample budget. Edit cells, try formulas and explore the controls without creating an account. Uploads are disabled; changes stay in memory and are discarded on reload. The demo cannot access private workbooks. Its optional local assistant has server-enforced shared usage limits, small inputs and a short timeout.
 
-Extraia o pacote. No diretório extraído, com Docker e Compose instalados:
+<details><summary>Small-screen layout</summary>
+
+![Excellence on a small screen](docs/screenshots/excellence-mobile.png)
+
+</details>
+
+## Working with spreadsheets
+
+- Use the formula bar or edit a cell directly. Formula names are in English, for example `=SUM(B2:B7)`.
+- Save a workbook to your account, reopen it from Files and review previous revisions. Conflicting edits are reported instead of silently overwriting another revision.
+- Import and export XLSX/CSV in the authenticated workspace. Keep your original file: macros, advanced formatting and other Excel features do not all round-trip.
+- Use the responsive menus on narrow screens; the grid scrolls independently so large sheets remain usable.
+
+This is a release candidate, not a complete Microsoft Excel replacement. See [format and feature compatibility](docs/COMPATIBILITY.md).
+
+## Run it yourself
+
+On Linux with Docker Engine and Compose v2:
 
 ```sh
+cp .env.example .env
 docker compose up -d --build
 ```
 
-Abra **http://localhost:3210**. Para obter o token de instalação de uso único:
+Open `http://localhost:3210`. For a public deployment, set `EXCELLENCE_PUBLIC_URL` to the exact HTTPS origin and `EXCELLENCE_SECURE_COOKIE=true` before starting. Port 3210 binds to loopback by default; publish it through an HTTPS reverse proxy that preserves the public Host header. The initial one-time setup token appears in the private service log (`docker compose logs excellence`). There is no default password or public registration.
 
-```sh
-docker compose logs excellence
-```
+The `excellence-data` volume holds accounts, files, and revision history. Keep it across container rebuilds. Use `node scripts/backup.mjs` with a protected destination and rehearse restoring a backup. See [operations in English](docs/OPERATIONS.en.md) or [Portuguese](docs/OPERATIONS.md) for the full procedure, and [compatibility](docs/COMPATIBILITY.md) for format limits.
 
-Crie o administrador com o token e uma senha de pelo menos 12 caracteres. Não há senha padrão nem cadastro público. O serviço é publicado em loopback por padrão. Os dados ficam no volume `excellence-data`, preservado ao recriar o contêiner. `docker compose down -v` apaga esse volume; não use para atualizar.
+## Security and privacy
 
-## GNU/Linux
+Accounts have separate files and sessions use secure cookies and CSRF protection when configured for HTTPS. This version has no multi-factor authentication, email password recovery, or SSO. The server can read stored files. External provider requests are optional and require server-side configuration; do not add provider keys to Git.
 
-Requer **Node.js 24 LTS** e um navegador moderno. O pacote distribuído inclui o build; não é necessário instalar dependências npm para usá-lo.
+Excellence is MIT licensed. Third-party notices are in `THIRD_PARTY_NOTICES.txt`.
 
-```sh
-sh install.sh
-```
+## Local spreadsheet assistant
 
-Abra **Excellence** no menu de aplicativos. Para usar sem instalar:
+The local deployment uses Qwen3.5 2B, quantized to Q4_K_M, through Ollama. The model is Apache-2.0 licensed and runs on the operator's server. Only the selected cells and your request are sent to the configured model. Responses are proposed changes: review them before applying. Model output can be wrong and never runs code or macros.
 
-```sh
-node scripts/launch.mjs
-```
+See [local model setup and limits](docs/LLM.en.md) ([português](docs/LLM.md)). No paid provider is required.
 
-O terminal mostra o token inicial e permanece aberto enquanto o aplicativo está em uso. GNU Guix funciona com um perfil que forneça Node 24; a distribuição não depende de `/usr/bin/node`, Electron, um runtime proprietário ou bibliotecas binárias npm. Não é entregue um pacote Scheme para os canais do Guix.
+## Development
 
-## Windows
+Source integrity is recorded with SecOps CodeMark. See [verification instructions](docs/INTEGRITY.md); private signing keys are never distributed.
 
-Instale Node.js **24 LTS**. Extraia o ZIP e clique em `Start-Excellence.cmd` para executar sem instalar, ou rode no PowerShell no diretório extraído:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\Install-Windows.ps1
-```
-
-O instalador cria um atalho no menu Iniciar. Não exige privilégios de administrador. A interface usa o navegador instalado; não há EXE/MSI nativo nesta distribuição. O script Windows foi inspecionado e possui CI preparado, mas não foi executado em um Windows nesta entrega.
-
-## Recursos implementados
-
-- Grade FortuneSheet: abas, fórmulas, edição, copiar/colar, desfazer/refazer, fontes, cores, bordas, mesclagem, filtros, ordenação, validação, comentários e congelamento.
-- Importação e exportação XLSX, CSV e formato nativo Excellence JSON. Aviso de conversão antes da importação e proteção contra fórmulas perigosas na exportação CSV.
-- Gráficos de colunas, linhas e rosca; resumos por grupo com soma, média, contagem, mínimo ou máximo.
-- Cinco temas: Meia-noite, Papel, Grafite, Ametista e Oceano. Células escuras opcionais com transformação apenas visual de cores.
-- Contas isoladas, administrador, mudança de senha, remoção de usuários, atividades recentes e salvamento automático.
-- Revisões otimistas: duas sessões não sobrescrevem silenciosamente o mesmo arquivo. Histórico de até 20 versões, restauração e recuperação local de rascunhos quando o navegador tem espaço disponível.
-- IA com OpenAI-compatible, Anthropic, Gemini e Ollama. Somente a seleção revisada é enviada após solicitação; propostas exigem aplicação explícita. Chaves ficam no servidor.
-- Servidor Node com SQLite; sem dependências npm no runtime empacotado. Sem CDN ou telemetria própria durante o uso normal. Provedores de IA externos têm seus próprios termos e custos.
-
-## Desenvolvimento
-
-```sh
-npm ci --ignore-scripts
-npm test
-npm run build
-npm start
-```
-
-Para edição com Vite, execute `npm start` em um terminal e `npm run dev` em outro. A distribuição usa Node 24 e versões npm travadas. `npm run build` aplica um patch reprodutível no FortuneSheet para inserir linhas sem `new Function`, manter seleções imutáveis e corrigir avaliação de literais lógicos, divisão e recálculo pela API. A política CSP continua sem `unsafe-eval`. Avisos e licenças de terceiros estão em `THIRD_PARTY_NOTICES.txt`.
-
-Testes de navegador:
-
-```sh
-npx playwright install chromium
-npm run test:e2e
-```
-
-O fluxo de CI para Linux e Windows e o build Docker está em `.github/workflows/ci.yml`. Ele precisa ser executado em um repositório Git; sua presença não significa que houve execução externa nesta entrega.
-
-## Documentação
-
-- [Operação, proxy HTTPS, backup e restauração](docs/OPERATIONS.md)
-- [Integração com LLMs](docs/LLM.md)
-- [Compatibilidade e limites](docs/COMPATIBILITY.md)
-- [Relatório de validação e parecer](docs/VALIDATION.md)
-
-## Licença
-
-MIT. Uso pessoal e comercial, modificação e redistribuição permitidos com os avisos da licença. As licenças das dependências continuam aplicáveis. O uso de provedores externos de IA pode ter custo; não há cobrança implementada pelo Excellence.
+Node.js 24 is required. Install the locked dependencies with `npm ci --ignore-scripts`, then run `npm test` and `npm run build`. Browser checks use `npm run test:e2e`. See [operations](docs/OPERATIONS.en.md) for backups, restores and deployment updates.

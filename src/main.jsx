@@ -317,7 +317,7 @@ function Auth({ session, onAuth, api }) {
     </div>
   );
 }
-function ChartPreview({ config, sheet }) {
+function ChartPreview({ config, sheet, theme }) {
   const ref = useRef(),
     [error, setError] = useState(""),
     [rows, setRows] = useState([]);
@@ -330,6 +330,9 @@ function ChartPreview({ config, sheet }) {
         setRows(matrix);
         const { default: Chart } = await import("chart.js/auto");
         if (cancel) return;
+        const styles = getComputedStyle(ref.current);
+        const textColor = styles.getPropertyValue("--muted").trim();
+        const gridColor = styles.getPropertyValue("--border").trim();
         chart = new Chart(ref.current, {
           type: config.type,
           data: {
@@ -357,7 +360,7 @@ function ChartPreview({ config, sheet }) {
             plugins: {
               legend: {
                 display: config.type === "doughnut",
-                labels: { color: "#aab4c3" },
+                labels: { color: textColor },
               },
             },
             scales:
@@ -365,12 +368,12 @@ function ChartPreview({ config, sheet }) {
                 ? {}
                 : {
                     x: {
-                      ticks: { color: "#8895a8" },
+                      ticks: { color: textColor },
                       grid: { display: false },
                     },
                     y: {
-                      ticks: { color: "#8895a8" },
-                      grid: { color: "#223041" },
+                      ticks: { color: textColor },
+                      grid: { color: gridColor },
                     },
                   },
           },
@@ -383,7 +386,7 @@ function ChartPreview({ config, sheet }) {
       cancel = true;
       chart?.destroy();
     };
-  }, [sheet, config]);
+  }, [sheet, config, theme]);
   return (
     <div className="chart-preview">
       {error ? (
@@ -413,6 +416,13 @@ function ChartPreview({ config, sheet }) {
   );
 }
 function App() {
+  if (/^\/demo\/?$/.test(window.location.pathname))
+    return (
+      <Workspace demo user={{ id: "demo", username: "Visitante", role: "demo" }} />
+    );
+  return <SessionApp />;
+}
+function SessionApp() {
   const [session, setSession] = useState(null),
     csrf = useRef("");
   const api = useCallback(async (path, method = "GET", body) => {
@@ -473,10 +483,10 @@ function App() {
     />
   );
 }
-function Workspace({ user, api, logout }) {
+function Workspace({ user, api, logout, demo = false }) {
   const first = useRef({
     id: null,
-    title: "Meu orçamento",
+    title: demo ? "Orçamento de demonstração" : "Meu orçamento",
     revision: 0,
     sheets: normalizeSheets(templates.budget.create()),
     meta: { charts: [] },
@@ -500,10 +510,10 @@ function Workspace({ user, api, logout }) {
     [panel, setPanel] = useState(null),
     [dialog, setDialog] = useState(null),
     [theme, setTheme] = useState(
-      localStorage.getItem("excellence-theme") || "midnight",
+      demo ? "paper" : localStorage.getItem("excellence-theme") || "paper",
     ),
     [gridDark, setGridDark] = useState(
-      localStorage.getItem("excellence-dark-cells") === "true",
+      !demo && localStorage.getItem("excellence-dark-cells") === "true",
     ),
     [menu, setMenu] = useState(""),
     [search, setSearch] = useState(""),
@@ -511,8 +521,9 @@ function Workspace({ user, api, logout }) {
     [address, setAddress] = useState("A1"),
     [edit, setEdit] = useState(""),
     [cellResult, setCellResult] = useState(""),
-    [auto, setAuto] = useState(true),
-    [ready, setReady] = useState(false);
+    [auto, setAuto] = useState(!demo),
+    [ready, setReady] = useState(false),
+    [engineReady, setEngineReady] = useState(false);
   const [providers, setProviders] = useState([]),
     [provider, setProvider] = useState(""),
     [prompt, setPrompt] = useState(""),
@@ -567,6 +578,7 @@ function Workspace({ user, api, logout }) {
     return all;
   }
   function stash(sheets) {
+    if (demo) return;
     try {
       localStorage.setItem(
         recoveryKey,
@@ -588,6 +600,7 @@ function Workspace({ user, api, logout }) {
   function changed(data) {
     try {
       latest.current = normalizeSheets(data);
+      setEngineReady(true);
       const selectedId = activeId();
       if (selectedId)
         latest.current.forEach((s) => {
@@ -626,6 +639,11 @@ function Workspace({ user, api, logout }) {
   }
   const save = async (copy = false) => {
     clearTimeout(timer.current);
+    if (demo) {
+      unsaved.current = false;
+      setStatus("draft");
+      return true;
+    }
     if (inFlight.current) {
       await inFlight.current;
       return save(copy);
@@ -695,6 +713,7 @@ function Workspace({ user, api, logout }) {
     unsaved.current = false;
     setTitle(doc.title);
     setInitial(doc.sheets);
+    setEngineReady(false);
     setMeta(doc.meta || { charts: [] });
     setGridKey((k) => k + 1);
     setStatus(doc.id ? "saved" : "draft");
@@ -706,6 +725,10 @@ function Workspace({ user, api, logout }) {
   }
   useEffect(() => {
     mounted.current = true;
+    if (demo) {
+      setReady(true);
+      return;
+    }
     (async () => {
       try {
         const list = await refreshFiles();
@@ -740,10 +763,10 @@ function Workspace({ user, api, logout }) {
   }, []);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem("excellence-theme", theme);
+    if (!demo) localStorage.setItem("excellence-theme", theme);
   }, [theme]);
   useEffect(() => {
-    localStorage.setItem("excellence-dark-cells", String(gridDark));
+    if (!demo) localStorage.setItem("excellence-dark-cells", String(gridDark));
   }, [gridDark]);
   useEffect(() => {
     const key = (e) => {
@@ -760,6 +783,23 @@ function Workspace({ user, api, logout }) {
     const t = setTimeout(() => setMessage(""), 9000);
     return () => clearTimeout(t);
   }, [message]);
+  useEffect(() => {
+    if (!menu) return;
+    const dismiss = (event) => {
+      if (event.type === "keydown" && event.key !== "Escape") return;
+      if (event.type === "pointerdown" && event.target.closest(".dropdown"))
+        return;
+      setMenu("");
+      if (event.type === "keydown")
+        document.getElementById("export-trigger")?.focus();
+    };
+    document.addEventListener("pointerdown", dismiss);
+    document.addEventListener("keydown", dismiss);
+    return () => {
+      document.removeEventListener("pointerdown", dismiss);
+      document.removeEventListener("keydown", dismiss);
+    };
+  }, [menu]);
   async function openFile(id) {
     if (id === current.current.id) {
       setPanel(null);
@@ -917,6 +957,7 @@ function Workspace({ user, api, logout }) {
     }
   }
   function choosePanel(p) {
+    if (demo && !["ai", "charts"].includes(p)) return;
     setPanel(panel === p ? null : p);
     setMenu("");
     if (p === "history") {
@@ -944,7 +985,9 @@ function Workspace({ user, api, logout }) {
       const s = activeSheet(),
         q = parseRange(selection),
         matrix = sheetMatrix(s, selection);
-      if (matrix.flat().length > 500) throw Error("Selecione até 500 células.");
+      const cellLimit = demo ? 20 : 500;
+      if (matrix.flat().length > cellLimit)
+        throw Error(`Selecione até ${cellLimit} células.`);
       const cells = matrix.flatMap((row, r) =>
         row.map((v, c) => ({
           cell: columnName(c + q.c1) + (r + q.r1 + 1),
@@ -953,11 +996,30 @@ function Workspace({ user, api, logout }) {
       );
       const context = { sheetId: s.id, selection, epoch: epoch.current };
       setAiContext(context);
-      setAiResult(
-        await api("/ai/assist", "POST", { provider, prompt, selection, cells }),
-      );
+      if (demo) {
+        const body = JSON.stringify({ prompt, selection, cells });
+        if (prompt.length > 300 || new TextEncoder().encode(body).length > 1500)
+          throw Error("Reduza a seleção ou a pergunta: a demonstração aceita até 300 caracteres e 1.500 bytes por pedido.");
+        const response = await fetch("/api/demo/ai/assist", {
+          method: "POST",
+          credentials: "omit",
+          headers: { "content-type": "application/json" },
+          body,
+          signal: AbortSignal.timeout(35000),
+        });
+        const result = await response.json();
+        if (!response.ok)
+          throw Error(result.error || "A IA de demonstração não está disponível agora.");
+        setAiResult(result);
+      } else {
+        setAiResult(
+          await api("/ai/assist", "POST", { provider, prompt, selection, cells }),
+        );
+      }
     } catch (e) {
-      notice(e.message);
+      notice(e.name === "TimeoutError"
+        ? "A consulta demorou mais que o esperado. Aguarde antes de tentar novamente."
+        : e.message);
     } finally {
       setAiBusy(false);
     }
@@ -1057,7 +1119,7 @@ function Workspace({ user, api, logout }) {
     beforeAddSheet: () => latest.current.length < 30,
   });
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !engineReady) return;
     const frame = requestAnimationFrame(() => {
       try {
         const all = normalizeSheets(grid.current?.getAllSheets() || initial),
@@ -1082,17 +1144,46 @@ function Workspace({ user, api, logout }) {
       }
     });
     return () => cancelAnimationFrame(frame);
-  }, [ready, gridKey]);
+  }, [ready, engineReady, gridKey]);
   const labels = {
-    draft: "Rascunho",
-    dirty: "Alterações pendentes",
+    draft: demo ? "Somente nesta sessão" : "Rascunho",
+    dirty: demo ? "Alterações nesta sessão" : "Alterações pendentes",
     saving: "Salvando…",
     saved: "Salvo",
     conflict: "Conflito de versões",
     error: "Falha ao salvar",
   };
   return (
-    <div className="workspace">
+    <div
+      className="workspace"
+      onDragOverCapture={demo ? (event) => {
+          if (event.dataTransfer.types.includes("Files")) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "none";
+          }
+        } : undefined}
+      onDropCapture={demo ? (event) => {
+          if (event.dataTransfer.files.length) {
+            event.preventDefault();
+            event.stopPropagation();
+            notice("Uploads não estão disponíveis na demonstração.");
+          }
+        } : undefined}
+      onPasteCapture={demo ? (event) => {
+          if (event.clipboardData.files.length) {
+            event.preventDefault();
+            event.stopPropagation();
+            notice("Uploads não estão disponíveis na demonstração.");
+          }
+        } : undefined}
+    >
+      {demo && (
+        <div className="demo-banner" role="note">
+          <strong>DEMO</strong>
+          <span>Dados fictícios. Edições temporárias, sem uploads. Recarregar reinicia a planilha.</span>
+          <a href="/">Entrar</a>
+        </div>
+      )}
       <header className="app-header">
         <div className="brand">
           <img src="/trophy.svg" alt="Troféu" />
@@ -1109,7 +1200,7 @@ function Workspace({ user, api, logout }) {
             }}
             maxLength={120}
           />
-          <span className={"save-status " + status} data-testid="save-status">
+          <span className={"save-status " + status} data-testid="save-status" role="status">
             {status === "saved" ? (
               <CheckCheck size={12} />
             ) : (
@@ -1125,45 +1216,51 @@ function Workspace({ user, api, logout }) {
           <IconButton
             icon={Sparkles}
             className={panel === "ai" ? "ai-button active" : "ai-button"}
+            aria-pressed={panel === "ai"}
+            aria-label="Assistente IA"
             onClick={() => choosePanel("ai")}
           >
             Assistente IA
           </IconButton>
-          <button
+          {!demo && <button
             className="avatar"
             title={"Configurações de " + user.username}
             aria-label="Configurações da conta"
             onClick={() => choosePanel("settings")}
           >
             {user.username.slice(0, 2).toUpperCase()}
-          </button>
+          </button>}
         </div>
       </header>
       <nav className="menu-bar" aria-label="Ferramentas da pasta de trabalho">
-        <div>
-          <IconButton
+        <div className="command-group" role="group" aria-label="Arquivo">
+          {!demo && <IconButton
             icon={FolderOpen}
             onClick={() => choosePanel("files")}
             className={panel === "files" ? "active" : ""}
+            aria-pressed={panel === "files"}
           >
             Arquivos
-          </IconButton>
+          </IconButton>}
           <IconButton icon={Plus} onClick={() => setDialog({ type: "new" })}>
             Novo
           </IconButton>
-          <IconButton icon={Upload} onClick={() => input.current.click()}>
+          {!demo && <IconButton icon={Upload} onClick={() => input.current.click()}>
             Importar
-          </IconButton>
+          </IconButton>}
           <div className="dropdown">
             <IconButton
+              id="export-trigger"
               icon={Download}
+              aria-expanded={menu === "export"}
+              aria-controls={menu === "export" ? "export-options" : undefined}
               onClick={() => setMenu(menu === "export" ? "" : "export")}
             >
               Exportar
               <ChevronDown size={12} />
             </IconButton>
             {menu === "export" && (
-              <div className="dropdown-menu">
+              <div className="dropdown-menu" id="export-options" aria-label="Formatos de exportação">
                 <button onClick={() => exportFile("xlsx")}>
                   Excel (.xlsx)
                 </button>
@@ -1176,7 +1273,7 @@ function Workspace({ user, api, logout }) {
               </div>
             )}
           </div>
-          <span className="divider" />
+          {!demo && <><span className="divider" />
           <IconButton
             icon={Save}
             aria-label="Salvar agora"
@@ -1184,15 +1281,15 @@ function Workspace({ user, api, logout }) {
             disabled={status === "saving"}
           >
             Salvar
-          </IconButton>
+          </IconButton></>}
           {status === "conflict" && (
             <button className="warning-text" onClick={() => save(true)}>
               Salvar cópia
             </button>
           )}
         </div>
-        <div>
-          <IconButton icon={ChartColumn} onClick={() => choosePanel("charts")}>
+        <div className="command-group" role="group" aria-label="Análise e exibição">
+          <IconButton icon={ChartColumn} aria-pressed={panel === "charts"} onClick={() => choosePanel("charts")}>
             Gráficos
           </IconButton>
           <IconButton
@@ -1207,9 +1304,9 @@ function Workspace({ user, api, logout }) {
           >
             Temas
           </IconButton>
-          <IconButton icon={History} onClick={() => choosePanel("history")}>
+          {!demo && <IconButton icon={History} aria-pressed={panel === "history"} onClick={() => choosePanel("history")}>
             Histórico
-          </IconButton>
+          </IconButton>}
           <button
             aria-label="Ajuda"
             onClick={() => setDialog({ type: "help" })}
@@ -1218,13 +1315,13 @@ function Workspace({ user, api, logout }) {
           </button>
         </div>
       </nav>
-      <input
+      {!demo && <input
         ref={input}
         type="file"
         hidden
         accept=".xlsx,.csv,.json"
         onChange={(e) => importFile(e.target.files[0])}
-      />
+      />}
       <div className="work-area">
         {panel === "files" && (
           <aside className="file-panel">
@@ -1399,7 +1496,7 @@ function Workspace({ user, api, logout }) {
                 <p className="muted">
                   Da pergunta ao resultado, com você no controle.
                 </p>
-                {!providers.length ? (
+                {!demo && !providers.length ? (
                   <div className="empty-state">
                     <Sparkles size={30} />
                     <h3>Nenhum provedor configurado.</h3>
@@ -1411,7 +1508,14 @@ function Workspace({ user, api, logout }) {
                   </div>
                 ) : (
                   <>
-                    <label>
+                    {demo ? (
+                      <p className="demo-ai-note" role="note">
+                        Demonstração compartilhada: até 3 consultas a cada 30
+                        minutos, sujeitas ao limite global de 20 por hora.
+                        Use até 20 células e 300 caracteres. Revise a
+                        resposta antes de aplicar; não envie dados pessoais.
+                      </p>
+                    ) : <label>
                       Modelo
                       <select
                         value={provider}
@@ -1426,7 +1530,7 @@ function Workspace({ user, api, logout }) {
                           </option>
                         ))}
                       </select>
-                    </label>
+                    </label>}
                     <label>
                       Intervalo enviado
                       <input
@@ -1459,11 +1563,12 @@ function Workspace({ user, api, logout }) {
                         onChange={(e) => setPrompt(e.target.value)}
                         placeholder="Ex.: explique estes dados ou proponha uma fórmula para calcular a variação percentual."
                         rows={5}
+                        maxLength={demo ? 300 : undefined}
                       />
                     </label>
                     <p className="privacy-note">
-                      <Lock size={13} /> Ao enviar, o provedor escolhido recebe
-                      sua instrução e somente o intervalo acima.
+                      <Lock size={13} /> Ao enviar, {demo ? "o modelo local recebe" : "o provedor escolhido recebe"}
+                      {" "}sua instrução e somente o intervalo acima.
                     </p>
                     <button
                       className="primary"
@@ -1473,6 +1578,7 @@ function Workspace({ user, api, logout }) {
                       {aiBusy ? "Consultando…" : "Enviar seleção ao modelo"}
                       <ArrowRight size={16} />
                     </button>
+                    {demo && <p><a className="demo-link" href="/">Entrar na sua conta</a></p>}
                   </>
                 )}
                 {aiResult && (
@@ -1570,6 +1676,7 @@ function Workspace({ user, api, logout }) {
                 ))}
                 {chartConfig && (
                   <ChartPreview
+                    theme={theme}
                     config={chartConfig}
                     sheet={
                       capture().find((s) => s.id === chartConfig.sheetId) ||
@@ -1753,7 +1860,8 @@ function Workspace({ user, api, logout }) {
           <span className="connected-dot" /> Excellence · MIT
         </span>
         <span>
-          {address} <span className="muted">·</span> Ctrl+S para salvar
+          {address} <span className="muted">·</span>{" "}
+          {demo ? "Sessão temporária" : "Ctrl+S para salvar"}
         </span>
         <span>
           <ShieldCheck size={12} /> Sem telemetria própria{" "}
@@ -2071,7 +2179,8 @@ function Workspace({ user, api, logout }) {
               </p>
               <h3>Arquivos e dados</h3>
               <p>
-                Ctrl+S salva. O formato Excellence mantém os recursos nativos;
+                {demo ? "Nesta demonstração, as edições duram somente nesta sessão. " : "Ctrl+S salva. "}
+                O formato Excellence mantém os recursos nativos;
                 XLSX e CSV são conversões com limites. Até 10.000 linhas, 256
                 colunas e 100.000 células preenchidas por arquivo. Revisões
                 concorrentes geram conflito; salve uma cópia para preservar o

@@ -18,7 +18,8 @@ import {
 import { resolve, join, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { normalizeSheets, normalizeMeta } from "../src/shared.mjs";
-import { loadProviders, assist, validateAssist } from "./ai.mjs";
+import { loadProviders, assist, validateAssist, validateDemoAssist, AssistError } from "./ai.mjs";
+import { createAiGuard } from "./ai-limits.mjs";
 import { withinDirectory } from "./fs-path.mjs";
 const scrypt = promisify(scryptCb),
   sha = (x) => createHash("sha256").update(x).digest("hex"),
@@ -75,6 +76,27 @@ export async function createApp(options = {}) {
   const setupToken =
     options.setupToken || env.EXCELLENCE_SETUP_TOKEN || random();
   const providers = options.providers || loadProviders(env);
+  const acquireAi = createAiGuard(db);
+  const infer = async (provider, input, response, release, demo = false) => {
+    const controller = new AbortController();
+    const disconnected = () => {
+      if (!response.writableEnded) controller.abort();
+    };
+    response.once("close", disconnected);
+    if (response.destroyed) controller.abort();
+    let uncertain = false;
+    try {
+      return await assist(provider, input, { demo, signal: controller.signal });
+    } catch (error) {
+      uncertain = error.inferenceUncertain === true;
+      throw error;
+    } finally {
+      response.off("close", disconnected);
+      // A cancelled HTTP request does not prove provider computation stopped.
+      // Keep the persistent lease until its bounded expiry on transport failure.
+      if (!uncertain) release();
+    }
+  };
   const publicUrl = env.EXCELLENCE_PUBLIC_URL
     ? new URL(env.EXCELLENCE_PUBLIC_URL)
     : null;
@@ -154,18 +176,18 @@ export async function createApp(options = {}) {
       rev - 20,
     );
   };
-  const body = async (req) => {
+  const body = async (req, maxBytes = 9 * 1024 * 1024) => {
     if (
       !String(req.headers["content-type"] || "").startsWith("application/json")
     )
       fail(415, "Use application/json.");
-    if (Number(req.headers["content-length"]) > 9 * 1024 * 1024)
+    if (Number(req.headers["content-length"]) > maxBytes)
       fail(413, "Corpo muito grande.");
     const parts = [];
     let size = 0;
     for await (const chunk of req) {
       size += chunk.length;
-      if (size > 9 * 1024 * 1024) fail(413, "Corpo muito grande.");
+      if (size > maxBytes) fail(413, "Corpo muito grande.");
       parts.push(chunk);
     }
     try {
@@ -229,6 +251,22 @@ export async function createApp(options = {}) {
             fail(403, "Origem não autorizada.");
           if (req.headers["sec-fetch-site"] === "cross-site")
             fail(403, "Requisição entre sites bloqueada.");
+        }
+        if (path === "/api/demo/ai/assist" && method === "POST") {
+          const provider = providers.find((p) => p.kind === "ollama");
+          if (env.EXCELLENCE_DEMO_AI !== "true" || !provider)
+            fail(503, "O assistente da demonstração está indisponível.");
+          const input = validateDemoAssist(await body(req, 2048));
+          // Forwarded headers and cookies are deliberately not trusted here.
+          // With a reverse proxy, visitors share the proxy's source budget.
+          const source = sha(req.socket.remoteAddress || "unknown");
+          const release = acquireAi(source, true);
+          try {
+            return send(200, await infer(provider, input, res, release, true));
+          } catch (error) {
+            return send(502, { error: error instanceof AssistError
+              ? error.message : "Não foi possível obter uma proposta válida do modelo local." });
+          }
         }
         const rawCookie = String(req.headers.cookie || "")
           .split(";")
@@ -573,18 +611,17 @@ export async function createApp(options = {}) {
           validateAssist(input);
           const p = providers.find((p) => p.id === input.provider);
           if (!p) fail(400, "Provedor não configurado.");
+          const release = acquireAi(user.id);
           try {
-            const result = await assist(p, input);
+            const result = await infer(p, input, res, release);
             audit(user.id, "ai.assist", p.id);
             return send(200, result);
           } catch (e) {
             return send(502, {
               error:
-                e.name === "TimeoutError"
-                  ? "Provedor excedeu 45 segundos."
-                  : e.message.startsWith("Provedor respondeu")
-                    ? e.message
-                    : "Não foi possível obter uma proposta válida do provedor.",
+                e instanceof AssistError
+                  ? e.message
+                  : "Não foi possível obter uma proposta válida do provedor.",
             });
           }
         }
@@ -592,7 +629,9 @@ export async function createApp(options = {}) {
       }
       if (!["GET", "HEAD"].includes(method)) fail(405, "Método não permitido.");
       const dist = resolve(options.distDir || join(root, "dist"));
-      let file = resolve(dist, "." + decodeURIComponent(path));
+      let file = path === "/demo" || path === "/demo/"
+        ? join(dist, "index.html")
+        : resolve(dist, "." + decodeURIComponent(path));
       if (!withinDirectory(dist, file)) fail(404, "Arquivo não encontrado.");
       if (!existsSync(file) || !statSync(file).isFile()) {
         if (extname(path)) fail(404, "Arquivo não encontrado.");
@@ -623,6 +662,7 @@ export async function createApp(options = {}) {
         res.end();
         return;
       }
+      if (e.retryAfter) res.setHeader("Retry-After", String(e.retryAfter));
       send(e.status || 400, {
         error: e.status
           ? e.message

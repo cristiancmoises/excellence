@@ -1,0 +1,8 @@
+{
+  "project": "excel",
+  "codemark_version": "0.4.1",
+  "pq_fingerprint": "SHA256:4YvvVDNYFQek7rCdr1ki7t1k2eEBgQ1/i9R6rO0lXow",
+  "classical_fingerprint": "SHA256:DvmM9B5wXh4O1ov7bM7HPW0RxGRzRj3uboyCdfuS7Z8",
+  "checkpoint": "3175cb0cbecfd3102951cf7085ca4c49980c6cf09d8ff9397857a6babf721a9a933945ca9ac02938a46ef28a08dfe4fd7a4e54e94638d63a334b8b9072aeab07",
+  "gpg_fingerprint": "0CFA43B9AA9642EAAF2BE983C4C661C9ECFB46E8"
+}

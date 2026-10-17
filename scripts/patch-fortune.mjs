@@ -3,6 +3,10 @@ import { pathToFileURL } from "node:url";
 import { normalizeBooleanLiterals } from "../src/formula-input.mjs";
 const edits = [
   [
+    'sessionStorage.setItem("localClipboard", plainText);',
+    "excellenceLocalClipboard = plainText;",
+  ],
+  [
     "delFunctionGroup(ctx, row, column);\n    setCellValue(ctx, row, column, data, value);",
     "delFunctionGroup(ctx, row, column);\n    execFunctionGroup(ctx, row, column, value);\n    setCellValue(ctx, row, column, data, value);",
   ],
@@ -35,11 +39,25 @@ export function patchSource(source) {
     else
       throw Error("FortuneSheet mudou. Revise o patch CSP antes de compilar.");
   }
+  const clipboard = 'export let excellenceLocalClipboard = "";';
+  if (!out.includes(clipboard)) out += "\n" + clipboard + "\n";
   return out;
+}
+export function patchReactSource(source) {
+  const before = 'sessionStorage.getItem("localClipboard")';
+  const imported = 'import { excellenceLocalClipboard } from "@fortune-sheet/core";';
+  if (source.includes(imported) && !source.includes(before)) return source;
+  if (!source.includes(before))
+    throw Error("FortuneSheet mudou. Revise o fallback de clipboard antes de compilar.");
+  return imported + "\n" + source
+    .replaceAll(before, "excellenceLocalClipboard")
+    .replace("Attempting to use sessionStorage fallback.", "Attempting to use in-memory fallback.");
 }
 if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
   const path = "node_modules/@fortune-sheet/core/dist/index.esm.js";
   writeFileSync(path, patchSource(readFileSync(path, "utf8")));
+  const reactPath = "node_modules/@fortune-sheet/react/dist/index.esm.js";
+  writeFileSync(reactPath, patchReactSource(readFileSync(reactPath, "utf8")));
   for (const format of ["es", "lib"]) {
     const dividePath =
       "node_modules/@fortune-sheet/formula-parser/" +

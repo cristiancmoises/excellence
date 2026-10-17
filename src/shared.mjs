@@ -248,13 +248,46 @@ export function buildPivot(sheet, keyCol, valueCol, operation = "sum") {
     celldata,
   };
 }
+function validateFormulaShape(formula, target) {
+  // Small syntax guards, not a complete spreadsheet parser or correctness proof.
+  let depth = 0, quote = null;
+  for (let i = 1; i < formula.length; i++) {
+    const char = formula[i];
+    if (quote) {
+      if (char === quote) {
+        if (formula[i + 1] === quote) i++;
+        else quote = null;
+      }
+    } else if (char === '"' || char === "'") quote = char;
+    else if (char === "(") depth++;
+    else if (char === ")" && --depth < 0)
+      throw Error("Fórmula incompleta: confira parênteses e aspas.");
+  }
+  if (depth !== 0 || quote || !formula.slice(1).trim())
+    throw Error("Fórmula incompleta: confira parênteses e aspas.");
+  // Ignore string literals and quoted sheet names. Only unqualified direct
+  // references/ranges are checked; cross-sheet and indirect cycles need review.
+  const expression = formula.replace(/"(?:[^"]|"")*"|'(?:[^']|'')*'/g, " ");
+  const refs = /(?<![\p{L}\p{N}_])(\$?[A-Z]{1,3}\$?[1-9]\d*)(?:\s*:\s*(\$?[A-Z]{1,3}\$?[1-9]\d*))?(?![\p{L}\p{N}_])/giu;
+  for (const match of expression.matchAll(refs)) {
+    const before = expression.slice(0, match.index).trimEnd();
+    const after = expression.slice(match.index + match[0].length).trimStart();
+    if (before.endsWith("!") || after.startsWith("!")) continue;
+    const first = parseRange(match[1]), last = parseRange(match[2] || match[1]);
+    if (target.r1 >= Math.min(first.r1, last.r1) && target.r1 <= Math.max(first.r1, last.r1) &&
+      target.c1 >= Math.min(first.c1, last.c1) && target.c1 <= Math.max(first.c1, last.c1))
+      throw Error("A fórmula proposta referencia a própria célula. Escolha outro destino.");
+  }
+}
 export function validateProposal(proposal, selection = "A1:Z100") {
   const q = parseRange(selection);
   if (!Array.isArray(proposal) || proposal.length > 100)
     throw Error("A IA pode sugerir até 100 células.");
   const seen = new Set();
   return proposal.map((p) => {
+    if (!p || typeof p.cell !== "string") throw Error("Célula inválida na proposta.");
     const a = parseRange(p.cell);
+    const cell = `${columnName(a.c1)}${a.r1 + 1}`;
     if (
       a.r1 !== a.r2 ||
       a.c1 !== a.c2 ||
@@ -262,7 +295,7 @@ export function validateProposal(proposal, selection = "A1:Z100") {
       a.r1 > q.r2 ||
       a.c1 < q.c1 ||
       a.c1 > q.c2 ||
-      seen.has(p.cell)
+      seen.has(cell)
     )
       throw Error("Proposta altera células fora da seleção ou repetidas.");
     if (
@@ -281,8 +314,9 @@ export function validateProposal(proposal, selection = "A1:Z100") {
             /https?:/i.test(p.value))))
     )
       throw Error("Fórmulas externas não são aceitas em propostas de IA.");
-    seen.add(p.cell);
-    return { cell: p.cell.toUpperCase(), value: p.value };
+    if (typeof p.value === "string" && p.value.startsWith("=")) validateFormulaShape(p.value, a);
+    seen.add(cell);
+    return { cell, value: p.value };
   });
 }
 export function normalizeMeta(meta = {}) {

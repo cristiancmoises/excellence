@@ -9,8 +9,13 @@ function table(name, rows) {
         r,
         c,
         v: {
+          ff: "Arial",
+          fs: 11,
           ...(typeof x === "string" && x.startsWith("=") ? { f: x } : { v: x }),
-          ...(r === 0 ? { bl: 1, bg: "#103b45", fc: "#ffffff" } : {}),
+          ...(r === 0 ? { bl: 1, bg: "#155d47", fc: "#ffffff" } : {}),
+          ...(r > 0 && (rows[r][0] === "Saldo" || String(rows[r][0]).startsWith("Total"))
+            ? { bl: 1, bg: "#e8f3ef", fc: "#17352e" }
+            : {}),
         },
       });
     }

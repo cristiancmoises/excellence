@@ -1,7 +1,7 @@
 services:
   excellence:
     build: .
-    image: excellence:0.1.0-rc.1
+    image: ${EXCELLENCE_IMAGE:-excellence:0.1.0-rc.1}
     restart: unless-stopped
     init: true
     ports:
@@ -19,7 +19,8 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
-      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:8b}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3.5:2b-q4_K_M}
+      OLLAMA_NUM_THREAD: ${OLLAMA_NUM_THREAD:-2}
     volumes:
       - excellence-data:/data
       - ./backups:/backups

@@ -1,10 +1,10 @@
-FROM node:24-bookworm-slim AS build
+FROM node:24-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5 AS build
 WORKDIR /build
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts --no-audit --no-fund
 COPY . .
 RUN npm run build
-FROM node:24-bookworm-slim
+FROM node:24-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5
 ENV NODE_ENV=production EXCELLENCE_HOST=0.0.0.0 PORT=3210 EXCELLENCE_DATA_DIR=/data
 WORKDIR /app
 RUN mkdir /data && chown node:node /data

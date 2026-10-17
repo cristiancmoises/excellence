@@ -18,6 +18,9 @@ test("planilha real: cálculo, persistência, temas, arquivos, gráfico e IA", a
   await expect(
     page.getByText("Excellence", { exact: true }).first(),
   ).toBeVisible();
+  await page.getByLabel("Endereço da célula").fill("D2");
+  await page.getByRole("button", { name: "Ir para célula" }).click();
+  await expect(page.getByTestId("cell-result")).toHaveText("1200");
   await page.getByLabel("Endereço da célula").fill("A1");
   await page.getByLabel("Valor ou fórmula").fill("10");
   await page
@@ -29,6 +32,17 @@ test("planilha real: cálculo, persistência, temas, arquivos, gráfico e IA", a
   await page
     .getByRole("button", { name: "Aplicar célula", exact: true })
     .click();
+  await expect(page.getByTestId("cell-result")).toHaveText("20");
+  await page.getByLabel("Endereço da célula").fill("B1");
+  await page.getByRole("button", { name: "Ir para célula" }).click();
+  const clipboardGrid = await page.locator(".fortune-sheet-canvas").boundingBox();
+  await page.mouse.click(clipboardGrid.x + 70, clipboardGrid.y + 35, { button: "right" });
+  await page.getByText("Copy", { exact: true }).click();
+  await page.getByLabel("Endereço da célula").fill("C1");
+  await page.getByRole("button", { name: "Ir para célula" }).click();
+  await page.mouse.click(clipboardGrid.x + 70, clipboardGrid.y + 35, { button: "right" });
+  await page.getByText("Paste", { exact: true }).click();
+  await page.getByRole("button", { name: "Ir para célula" }).click();
   await expect(page.getByTestId("cell-result")).toHaveText("20");
   await page.getByRole("button", { name: "Salvar agora" }).click();
   await expect(page.getByTestId("save-status")).toContainText("Salvo");
@@ -253,4 +267,64 @@ test("falha de salvar mantém edição recente; falta de espaço local mantém a
   const d = await dialogPromise;
   expect(d.type()).toBe("beforeunload");
   await d.dismiss();
+});
+
+test("interface compacta mantém comandos, menus e painéis acessíveis em telas pequenas", async ({
+  page,
+}, testInfo) => {
+  await login(page);
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  for (const width of [1440, 1024, 768, 375, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    const geometry = await page.evaluate(() => {
+      const rect = (selector) => {
+        const { x, y, width, height } = document
+          .querySelector(selector)
+          .getBoundingClientRect();
+        return { x, y, width, height };
+      };
+      return {
+        pageWidth: document.documentElement.scrollWidth,
+        header: rect(".app-header"),
+        formula: rect(".formula-bar"),
+        grid: rect(".sheet-surface"),
+        actions: [...document.querySelectorAll(".menu-bar button")].map(
+          (element) => {
+            const { left, right } = element.getBoundingClientRect();
+            return { left, right };
+          },
+        ),
+      };
+    });
+    expect(geometry.pageWidth).toBe(width);
+    expect(geometry.header.height).toBeLessThanOrEqual(56);
+    expect(geometry.grid.height).toBeGreaterThan(400);
+    expect(geometry.formula.y + geometry.formula.height).toBeLessThanOrEqual(
+      geometry.grid.y,
+    );
+    for (const action of geometry.actions) {
+      expect(action.left).toBeGreaterThanOrEqual(0);
+      expect(action.right).toBeLessThanOrEqual(width);
+    }
+    await page.getByRole("button", { name: "Exportar", exact: true }).click();
+    const menu = page.locator("#export-options");
+    await expect(menu).toBeVisible();
+    const bounds = await menu.boundingBox();
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
+    await page.keyboard.press("Escape");
+    await expect(menu).toHaveCount(0);
+    await expect(page.locator("#export-trigger")).toBeFocused();
+    await page.getByRole("button", { name: "Assistente IA", exact: true }).click();
+    const panel = await page.locator(".side-panel").boundingBox();
+    expect(panel.x).toBeGreaterThanOrEqual(0);
+    expect(panel.x + panel.width).toBeLessThanOrEqual(width);
+    await page.getByRole("button", { name: "Fechar painel" }).click();
+    await page.screenshot({ path: testInfo.outputPath(`workspace-${width}.png`) });
+  }
+  await enter(page, "C2", "=SUM(4,5)", 9);
+  await page.getByRole("button", { name: "Salvar agora" }).click();
+  await expect(page.getByTestId("save-status")).toContainText("Salvo");
+  expect(errors).toEqual([]);
 });

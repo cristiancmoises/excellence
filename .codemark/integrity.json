@@ -1,0 +1,446 @@
+{
+  "algorithms": [
+    "sha256",
+    "sha512"
+  ],
+  "created_at": "2026-10-17T03:30:54Z",
+  "excluded": [
+    {
+      "path": ".codemark",
+      "reason": "Metadados do CodeMark"
+    }
+  ],
+  "file_count": 71,
+  "files": {
+    ".dockerignore": {
+      "mode": 420,
+      "sha256": "a1107a426416028c5eefd3caffdbcbd0a633e12ea48986b855506dfe5d88f2cc",
+      "sha512": "34a163ad973544fbcb6f149c7ed22c6c5111bd64f7fd2f8be29ddec0fbb1b6c054e32aa0fe60a90422a7522b684889ee1406451ebe00b9c6280cb168fd1a1940",
+      "size": 159
+    },
+    ".env.example": {
+      "mode": 420,
+      "sha256": "1ee7423bf7c3318bc28293e58b541270bba6c61accfcaf6f0285bf2e3b26a33a",
+      "sha512": "0b7a74fbc9915adae5c27a1cd70028e24473c1a3493fd7793c78a1e1d2d4716ed5fa7066f90ffd75ffcf0540e2ceb0df9977aab0c150f80e71a1992cbb7a6a6b",
+      "size": 691
+    },
+    ".github/workflows/ci.yml": {
+      "mode": 420,
+      "sha256": "561bb45e5f98eb0edaae9c90e06d0fc4ae8e76a45e262bf01dc389c0210130f7",
+      "sha512": "8f8e30e09af0cb072b7b9dd0fc6a5ed65ad7814cf6aff89ddc467194c73e6e34f6a66abbfd7d431bfb4b75c770f51ca446b78db6ffd828ffe223c1d3ea883c75",
+      "size": 1285
+    },
+    ".gitignore": {
+      "mode": 420,
+      "sha256": "54bfabf26c0c076cf314c78eda37d4fbbf447849b215df7f0b075353d811b7e9",
+      "sha512": "c7322bff2b0365e74de96fc81e2dc7b8641561229084a832e16bb4906b14455d50ef1ac483a4036342ade11a7e91aa83ce677e07c0976c44f84be7c4aa024f5f",
+      "size": 160
+    },
+    "CHECKSUMS.sha256": {
+      "mode": 420,
+      "sha256": "b43a66a2d21340aa8be93a3bc6cb0537173ef01de204906dd84243683b555be4",
+      "sha512": "1e54a7fca3bf108eacdbf5708de26424b3d9b00ce080231191a7cb75d9037d18290352705cbe5ef8c150602c34728cadca8a4a21ba0f2e262e0d1b2081fff773",
+      "size": 6057
+    },
+    "Dockerfile": {
+      "mode": 420,
+      "sha256": "c9045ecf529ede0451d8e3366d0d1a4ae2597efbde893332766deadcb803c52f",
+      "sha512": "14c3084c15e7ac6c2b5b5888095c55ff70992c8ad230ccfc5f4910047e4e8a152ee8b3575070521b4b8fb4d24364b67b853adbfb1d3ebb62720ff25313f8378b",
+      "size": 987
+    },
+    "Install-Windows.ps1": {
+      "mode": 420,
+      "sha256": "cfcb57e8e70c90f132d5494686f47829d4fd260cf5919e20e46c2f1f42910c7a",
+      "sha512": "2b80776595ae9b4af08440ddb52ba1caebd2090143b407c135a10e2aee947711c759cd40cd78fb7b29b91ba647b8e87d0fe168b2afefb763153dee3100b8e678",
+      "size": 1545
+    },
+    "LICENSE": {
+      "mode": 420,
+      "sha256": "bfce06a286bd476ec8abe6c4d7445090d4a6e6a3a89375db099e11300bc165db",
+      "sha512": "9f9af669470aae2fbb2b4a590e3c3a9d4d6d4dc3326f33b076e7eff5e501a46e3f0391f5bb5233ab8de8b6b16edb4b8164827a6ca172f7fd285a1a2dbf93b961",
+      "size": 1106
+    },
+    "README.md": {
+      "mode": 420,
+      "sha256": "0b38483256ebaa14cd591c8aa067996a95b16efed82088119a254d70936f725d",
+      "sha512": "f80c4c20236bf5948fc90da091efde4cffe0c37daae02da3b6d221aba789d57af589175a6e509d24aa943bf1ce317e572a5b8d90674f6b0450d36541639d297d",
+      "size": 4053
+    },
+    "README.pt-BR.md": {
+      "mode": 420,
+      "sha256": "bad6e82f8f5c502eea2517a8d32db7d9915e33d5433bfed2320d1fc54f5d839e",
+      "sha512": "c0f052cc27626e0ba00deb59d32664381b9e6fc83f7d2bca34925b8795d05905bff4a348cbe7217d543f1425e3fd509c9a5a54c52b5c8fee8c7742075cde3c93",
+      "size": 5719
+    },
+    "RELEASE.json": {
+      "mode": 420,
+      "sha256": "23e0bf35dd2fbc610f1f10c62405e13d03513e91ef836b4b1bc7a1262dddffee",
+      "sha512": "be25e651378c034d10e7bd9937cfeb4a6f8c9d37110ba510f9df35df9d3cd7f764aac65082faa7f9f275a2929e2a9092a6365db193177fff7448df858ca7c84b",
+      "size": 637
+    },
+    "Start-Excellence.cmd": {
+      "mode": 420,
+      "sha256": "765b3feba1ebc8d50059c5122c2df788293f2cfc383f3d05e658b09d498189e5",
+      "sha512": "56143275771f98712b72dbd0b870a24f97d4eb08c9b5aec6e322d0ed1560ff6336e07d12d5c51618d488610c299a28539abd00a2e63f9c91e17176adf9c9c856",
+      "size": 70
+    },
+    "THIRD_PARTY_NOTICES.txt": {
+      "mode": 420,
+      "sha256": "cbeba1d0f9b13f13672f45a41b23bb26159d8ecc46f877b78465a98dbba71768",
+      "sha512": "676f0a745d1ace5ec86fb58b572723e07563a43e5dfff521931e38a439cbd6bab5735bec6d369ef831e3a7cf48bd0ac3c0349bee8d41a3f6699c9a7ff7232791",
+      "size": 560749
+    },
+    "compose.yaml": {
+      "mode": 420,
+      "sha256": "3b8faa12fb5e01a71665071a9798d9a3234a60f77545a19e35152a2a03f149c7",
+      "sha512": "fd05e677e3e9ddd1d0dc2f3718b92a31c0a8e175e3f60930184167e147873f13e32a7c31df4bc53ac05c8219c7dffc46d70970d12f5f594d7c6a036df5ffae7a",
+      "size": 1222
+    },
+    "deploy/compose.ollama.yaml": {
+      "mode": 420,
+      "sha256": "42dbc940e3ac875aa4afcd17a4edb9fc7b345005b6b12dec5612f04de3dfd71b",
+      "sha512": "0de15d63788aad7ffcebff1e0f04c45fed4b66d2cd96cffce6732dbf121be37b3728188e30d6437dca80c26a5de1ba1ccdb5765ff6931922a157476572141a10",
+      "size": 1230
+    },
+    "deploy/model.json": {
+      "mode": 420,
+      "sha256": "cbe3b50ac78de683da215101b9c2f4e79b3819779a5e59b792a11d71e8f235f3",
+      "sha512": "999d1e850ed2ea5d98765f627b3c25470ab932e30d8a5f3b644b109887013700cb3049595420adca1eaa0354b4f0ff864124e54102e3a81ef8d6fee37c0b8fdc",
+      "size": 482
+    },
+    "dist/assets/charts-BNGb8CAJ.js": {
+      "mode": 420,
+      "sha256": "d348c5cdf19ec34f74debe95fd5013cca4a70ed764bc9c3fd00715bd37201aed",
+      "sha512": "b41c8d0839c7038eb2fb219e4ea6eee554ccb7999b2ea1aa03869fad2aea3e3b2f4d06ed8d36b3ce387f84cee56d23a325396c7f7ef169330a8efcae35961c4a",
+      "size": 203122
+    },
+    "dist/assets/index-C-oVBBUZ.js": {
+      "mode": 420,
+      "sha256": "f599dcbdc8444cf65ecd0df56ba3952572b2fb9f013183edf8cb65c8e71e951e",
+      "sha512": "1deb24a11bda9ff6f3fc63da9aa43c201940740d4635db48b415d71a7fc43c687a67466265c884f9e09c1f22fb23ad91cf07e0d707c06006710e7d9d5ee70e01",
+      "size": 212857
+    },
+    "dist/assets/index-DKjtVHRx.css": {
+      "mode": 420,
+      "sha256": "e9836aa9545d0f426a7144c79ab9f0cb9f0b918672a24f26ac91d920409737ff",
+      "sha512": "2efe6bac80b6af80161aefcc0222399382a4ea97c78a5e2cc04b9c477f0f1e154fd02382b8af4085be676de809ff960e77a98ffb937de3c7faeb017aec18913f",
+      "size": 20004
+    },
+    "dist/assets/rolldown-runtime-COiEfhsA.js": {
+      "mode": 420,
+      "sha256": "174e7e98105b02138bee9b4c62dfc8a01980db395f9e6c916db999c091115562",
+      "sha512": "47889405c0a76750a29ec245c1893bdb2c448ad491651ac54b0f46acb15041fe17796481a5fe742d500cb367b53c43ee205dfa95e01fccc7069ff95bfee195f1",
+      "size": 1116
+    },
+    "dist/assets/spreadsheet-D1FQjVZ-.js": {
+      "mode": 420,
+      "sha256": "2317c41c2066e5e031c406023be525ddaf69f5f7f5054977c596d75fd173630c",
+      "sha512": "a35202c6f95cd66a3ae7b30209620bafb663ec4209d13c4ec4b5409f77d47e78a1a5a83b14bd70a8307a8a4b10d7f5faedd5cfe886b7cabe96b6fbb7ae5de8bc",
+      "size": 2715924
+    },
+    "dist/assets/spreadsheet-DzjiTq0c.css": {
+      "mode": 420,
+      "sha256": "6541621b4ce9602e9bd59e2f2457f62c36525d31866c4d30e9cdbc7c49e350ce",
+      "sha512": "86a72cd166ec842378b93103552cd2481f472ae9a4f021bcec9c0d021ccd0c5b9e4a22a99c6e3a21f755bf54d11de77403da68a8feb5571e3ee57f5158e09c3c",
+      "size": 48951
+    },
+    "dist/assets/xlsx-AwG-O67j.js": {
+      "mode": 420,
+      "sha256": "efa47e055bb672e21c3c25d3798ad3cfdb72ee6bffeb7575ee4bc1a775d961a7",
+      "sha512": "edd9bd21eb44a4252cdb181718731f0b9ba8f3753fd482e4221eb779c499ff0cc97bb980cd333fec445899f2a693f043eead894f525cf7912ee740fe776cb884",
+      "size": 4374
+    },
+    "dist/assets/xlsx-DoAus6Wm.js": {
+      "mode": 420,
+      "sha256": "a5a4e91df1898d3ccad260e7853ea705ee5059f61bceb3bfb290288f9256b073",
+      "sha512": "ca7856d5c555102970e9fc1f563b6b77222ee58eef94369c6bf4cd10348984abd37b5ae4f486b1508b5cd3dec54ab40e1a9ae2ba775ad7b40020a53899b68539",
+      "size": 929401
+    },
+    "dist/index.html": {
+      "mode": 420,
+      "sha256": "53c0eb099107a30a9853896a68cd1cde5c7d62f6530cd0329c5d48d11414fe4b",
+      "sha512": "f6ed9a66da5b61722d13dd17d43bef57608eaab8660095b77f7ab004bfa36a04e830f5cdf86ce9ce866a8cc212df8a81bff66dcdece8539aa8f8d91d3a713052",
+      "size": 803
+    },
+    "dist/trophy.svg": {
+      "mode": 420,
+      "sha256": "1375f3c3d58d51d9fbf42bb79e4959a10f0769a61c015b6a2906773bd3c6aa79",
+      "sha512": "1db0ef5b461e189b6b46b4b3c1c10d967c4169a15777678ad1320a9813c6500571485571460e65ac4eda67ac377f69e78dd67759840e25f08724e392df7e53a3",
+      "size": 453
+    },
+    "docs/COMPATIBILITY.md": {
+      "mode": 420,
+      "sha256": "ee9fa89da6120b54eb1a2253dc9dfa3051c12428c084883e8e2e53ff5e28b7b8",
+      "sha512": "b528713215a2d9319c8f5fab6b23f8ad3c7fc513e31811724544d04f0532a5263cb246a60292f56d50038d4ca6433cb24bb02714ee99403cd35ebbca365dac7a",
+      "size": 3646
+    },
+    "docs/INTEGRITY.md": {
+      "mode": 420,
+      "sha256": "5886dbfce01808316ee241c0d751253931abc9d3d5849165970d68df1beeaf51",
+      "sha512": "799150cb6155a296dce34cf953a7ef4c974a41ccab66cd61fd7b93e49cb903631bdcfeb0f8197d44f65d4f238afafe8998fd1dc86b9cda0b59f20d5d0f7f71e4",
+      "size": 3347
+    },
+    "docs/LLM.en.md": {
+      "mode": 420,
+      "sha256": "a7b3e999e11e8a64ecd6190609a3fedf5acb3672f88e03da45ad585f40025499",
+      "sha512": "23bd7c2ddb364a3755d2b6302c6244e9e93ea52892f6f9a7b6f7cf2ebd4594e3d821d8ba081a6c909daa56368172499349f855e2db7f616d3a2896575840f3b1",
+      "size": 10085
+    },
+    "docs/LLM.md": {
+      "mode": 420,
+      "sha256": "955a988651e7f1ce460c26e84cc54a897f8f930bf3a19324ee8cfba5c0113e79",
+      "sha512": "1732ec55e4d4d0f069a337ba07747077c5a4c4e2e92fbe353ae432299f519852858a3ce2c2381f43980745b9bf4486e0dcb736899fd1f0b29f39b3711765e828",
+      "size": 11467
+    },
+    "docs/OPERATIONS.en.md": {
+      "mode": 420,
+      "sha256": "adf6d88748cbddf0915cffb4f5ff034566a0d603fdeb35a1075399811c869557",
+      "sha512": "d085d1d2f8939d1506db72928f6800adb9b2cb4268a5cf8b26e91c97d049b1440d9b2fbfe48db0969a8b26bdb929a916824f12f548d9844ebb963e4ed8415608",
+      "size": 4271
+    },
+    "docs/OPERATIONS.md": {
+      "mode": 420,
+      "sha256": "fcf9aaf3accaeb2be046c5a3381ac993b0e902225cfe66de0940d67e40585f83",
+      "sha512": "08e7e8b06e61e70907e4578efedcca769be783923034876cb634f71a2b9719c87daca49d2a4e5f7bc902d13b6ea8cc71d824aa4b5df55a0d19ace94c5849ee7e",
+      "size": 4929
+    },
+    "docs/VALIDATION.md": {
+      "mode": 420,
+      "sha256": "627e13bd62045c48c5f709875c848d0a121c22b8ae93db2cb47aeafc5209efad",
+      "sha512": "c39581dedd23f50076bf5d1f46378ece1407b39b05adbae720d8c39b2f3ecdf4784dfcab7429ca75d9e151032e90faf10d4f913310e6daa30e4d69f028699a49",
+      "size": 12053
+    },
+    "docs/dependencies.json": {
+      "mode": 420,
+      "sha256": "90464260c4d140935c4b61be4041e2887f525a7a367eeda4620efbde27f35a66",
+      "sha512": "d2402b66604636d455a9c11169eb50560c67c6806605f3526eb48d7ca2e7e42ce14b0a8178ddd29bc896d7dd0ac29573a1d7faa38a94584201d7d8bbde26300b",
+      "size": 43813
+    },
+    "docs/screenshots/excellence-desktop.png": {
+      "mode": 420,
+      "sha256": "203d50e67c2c754f6f107263a3811c2bd997778e8a73196d292d278e4c1108e8",
+      "sha512": "1f8d78fca058e5b2992d7fd2b6136d6effbf044a82b64c9de5716d7d4a4ba7a07e43e8e3626711e7c8cd2b7773fbf5e067ae62d6c9fdcb44917e66e79d249e7f",
+      "size": 121130
+    },
+    "docs/screenshots/excellence-mobile.png": {
+      "mode": 420,
+      "sha256": "efa99787efc8112e8444cc1aaacaf0a99d49851faf83a732a3673de9b62b9c05",
+      "sha512": "2db1d22b15cf0cf39da2b08bcfe6182fc3b2293454828d0156b2ec38176d1c743e19f2d76ed41828b49f27e81d2bfa85f9dc07b22f089c914b08ab126d84d240",
+      "size": 47017
+    },
+    "index.html": {
+      "mode": 420,
+      "sha256": "b0d0ecb090f3c743886f38f9e900b3b8e239b966b3929e3315640fd25ceaf8db",
+      "sha512": "b885d1aace291658d14044d1a4fbe1edcb633b8900bf85768eef938f5e4e380da5c4e0c5369868cd5a183319325d0e7b7fc45ccd84da0ce9da97fba01e6ccd3f",
+      "size": 461
+    },
+    "install.sh": {
+      "mode": 493,
+      "sha256": "e24ac63714eae7b26cfcb405672272d2fa85f1990d6cd0781c248c9d66859c47",
+      "sha512": "e48d7543d9f1dcd284c498e7907a0335abaf0ea90cfbf4e66bb02683074b2087d7dba09f0a2e84ae22eeb8836ec096818a188c261fd0088e6a5ae4e08fc069ea",
+      "size": 1776
+    },
+    "package-lock.json": {
+      "mode": 420,
+      "sha256": "ad7e19a2397e6d65bdc933702c1be8a92099c40fe1ea473474d3ab64b7da5474",
+      "sha512": "5edd28eaab44e56e09a5a670791a06184b1d4a5f143189afb2b7e249ec237e15df8a46e31fabe42a8e3b4e29a16f1e6e6bf858a6ee764e243a4a04bb86cf9b4e",
+      "size": 128161
+    },
+    "package.json": {
+      "mode": 420,
+      "sha256": "ff90fbde8bcc162b9d223b8cdacb50ab3da30553ce834645879ae728d65659f8",
+      "sha512": "27f69e274d86ddc829a2531d3871eb17958bc3f5d12b978027859d4421bc89433cf316c1699e651fa2a5d47e7fbc73f618fcf28320c7875d46908b902be12502",
+      "size": 1079
+    },
+    "playwright.config.mjs": {
+      "mode": 420,
+      "sha256": "ce9611093c8df123767244d7face74164e7afc57cfed2c1564a4c2923c983270",
+      "sha512": "a0d11c7f0e5f47e0302622f696c52cbdf1b064c84060e1ddf3b640ad36908558598f4ba261383e8922643d21f3d2e083eaff711fb237f9b5834a387094df0eb3",
+      "size": 764
+    },
+    "public/trophy.svg": {
+      "mode": 420,
+      "sha256": "1375f3c3d58d51d9fbf42bb79e4959a10f0769a61c015b6a2906773bd3c6aa79",
+      "sha512": "1db0ef5b461e189b6b46b4b3c1c10d967c4169a15777678ad1320a9813c6500571485571460e65ac4eda67ac377f69e78dd67759840e25f08724e392df7e53a3",
+      "size": 453
+    },
+    "scripts/backup.mjs": {
+      "mode": 420,
+      "sha256": "bbed0b5a8e9e77ddb2a836338f5714cb037a7a21acc71cf52560248b8122ffc2",
+      "sha512": "e786ebd888fcd1496809f6153d05f85da069070d9840cd7619cfaf816178663ca0bfd998df5ddb16140097ee74695759458ad6aed7e300d66b540717d4dff668",
+      "size": 1014
+    },
+    "scripts/launch.mjs": {
+      "mode": 420,
+      "sha256": "45ff6c6cec070555310823b68e57ac2c835fc4a678bbb8e5e0177da992fbfb59",
+      "sha512": "63db86c86837e365b52a197896c9e6d3dc462be3b1e88a4c53f4c09f769561493aa032d6bcd35e562da5653a272ccc050b291e1effb0ce1ebb8e8f776156e211",
+      "size": 1913
+    },
+    "scripts/licenses.mjs": {
+      "mode": 420,
+      "sha256": "64c9b754be70aab5d5c1c20b37b7b20a9ee9f5af86f1f2e55c84deb61517a5e1",
+      "sha512": "2a8fc8f848c3266f65dd2c16c9db463a53d6f978156003ccc3df4fcd9010a2f56a6a55cf0b49a77cb5a0f18f79eac608d36daaa70058903c16d43f5ebe33fef4",
+      "size": 2745
+    },
+    "scripts/patch-fortune.mjs": {
+      "mode": 420,
+      "sha256": "7662940e615285fd4659209344225a2a1382faf5457819314ab2ce0d1721e0b3",
+      "sha512": "9dd0c559bdda4cc76a0afb65733488732fb0c7e3c8a1d710030b1b2ab2b993d674dac6c2dd7f0d04b2c90a08ca9ec8bd397cb9b28bb1da141f37a2d88043561f",
+      "size": 4496
+    },
+    "server/ai-limits.mjs": {
+      "mode": 420,
+      "sha256": "8bdec26862f332be6a9c7e8caa7da82065385a47545bd77fb2eacb991684000a",
+      "sha512": "858d46fb552ec1a199aca68a909f50fd6fa9d7df586bbc9f5b986da25308aded1d164d254f79260f49907732fc8e3ac088de02f5f88c2e01222df5239301e2da",
+      "size": 2382
+    },
+    "server/ai.mjs": {
+      "mode": 420,
+      "sha256": "86ea6e70a70315759f4d62c4a6ba80e0f7a8e9a2d610027e532eab50dd65b134",
+      "sha512": "f993a4bdefc8a34d5fa174af7a74e0150bb6cf6803bd059892c3168e456f3f0fe4fa9e897dce156c85d27785498031ff98e1e3e3ee3836afe9cc9f34f5d23eaa",
+      "size": 14528
+    },
+    "server/app.mjs": {
+      "mode": 420,
+      "sha256": "b30302746fecbd724de3eeb6f75972d68facfa0495e0bed9c0cd1ddbaba84340",
+      "sha512": "49d99ea0c693ca4bd3b962826e0cb623883be25344bc663a05dc7375b2f84cc21b75d10fefab7417a0b98096c703c8f83f806209a195cda5e0c082875edab8b6",
+      "size": 26379
+    },
+    "server/fs-path.mjs": {
+      "mode": 420,
+      "sha256": "75cc14e22b2bfa123038c8a1ff2d5a34ea60ad21cbd83914a82ea11886063f19",
+      "sha512": "099fa4ff638c319e2286922030a9fcf8d08dca8c52e57efb9c2c084a4a445e9505f5e5caddccd62dac5aef3c8ed90549e3d6aa5b3ce4b2bfb9fc26cd1a25a4b2",
+      "size": 272
+    },
+    "server/index.mjs": {
+      "mode": 420,
+      "sha256": "2003b74bc56a39ed8d5604bc8a213858a9fcfb455fa71669a5c064682ea40c01",
+      "sha512": "8bd338913efbb83c2963a09fe4efaf6c61002ad467671aea6c1d30295a8d7adf89003480e8b4831b5d4130d08190c07de01c3b333636342116d60770aa0c45e8",
+      "size": 630
+    },
+    "src/formula-input.mjs": {
+      "mode": 420,
+      "sha256": "3f34a2f9fb0d6dd6d57b730e58bac2b5bc10aef283384e900e2d34d02c1407de",
+      "sha512": "1d20467e9654e284b81c29cf86e04a3fb2ab61ece9009178235f76cfe55d5d03bd4485c7926426b0affca645324c65a5709840069abde0e9a43b7c676362ac5f",
+      "size": 997
+    },
+    "src/main.jsx": {
+      "mode": 420,
+      "sha256": "d830383820693d47699b576755284b5561f33272c81d75b75f8594ce05728ce2",
+      "sha512": "fd133541f99ff46328610d318e0302aa9b6892306ed0343a2dc95db7c3fded254b95bc3f15abb5ce2695e112655de28c8e37c46ee2ec6d5cdd3c268016b62d62",
+      "size": 73263
+    },
+    "src/save-state.mjs": {
+      "mode": 420,
+      "sha256": "a3a4485aceefd6dda27f4eda463d0e5d7f9563fc343bbfd024df9f781880092d",
+      "sha512": "3f9e779a9464be918c483ef24abd8890a20af125b3dd0dc903d7052433c7cc1609e7054ac17800d443b8823ec77352336776099157ed14f2bd43ee69dcad2136",
+      "size": 312
+    },
+    "src/shared.mjs": {
+      "mode": 420,
+      "sha256": "f0567cc442121fceb415a9d645f9704614ca95eb623a5e81b551e219c64252d3",
+      "sha512": "19d9d0b8c466b9f300d3d9d2f6bd9ca9817412edfeacd22894ffdf28befe49c54fd711664490b8f5dfa85ea1f07c18a4b81861ee6752fd1a0fa39c899f610ec7",
+      "size": 11954
+    },
+    "src/style.css": {
+      "mode": 420,
+      "sha256": "67f785b3f7b124355fdd9e4d468979d013fdb95f07007a5cb65825ed8593d01e",
+      "sha512": "99ae7369adda6e20a1a9b4d145ee4761e057f51e3df0c3dfd9502ee0d9ee266be1d2ba5437781e22acc13648435010d1bbf8d7621acf8618a46e6251d1a52f11",
+      "size": 24803
+    },
+    "src/templates.mjs": {
+      "mode": 420,
+      "sha256": "d7c6ce96315c2dc486ccbbd0ffb3ff7e27e50e4dc6459c85446332757a8ad763",
+      "sha512": "d8c7031210ce1f89fd42b5d32abb8dc74356c98dee07e1f6071e228bb7048a3cb95b9c4450258f21e8f7a96051852fc8d7c82d9dd67b047efe124e22ffa78ada",
+      "size": 2304
+    },
+    "src/workbook.mjs": {
+      "mode": 420,
+      "sha256": "cb56b8d8474f37feab902d81a31035bdeb68bc42dc9ecef090c0b4940ec774f6",
+      "sha512": "653ef4d33b05e8ce2a4f2054f6d0ff9a1502e79a339802a0e257edb7212246d9f0169b9f5dc4484146afcc0b68451aaa3555f09007fa1770c79f6e654b8d732f",
+      "size": 1189
+    },
+    "src/xlsx.mjs": {
+      "mode": 420,
+      "sha256": "c27353643de47880fc3b47f7bc674d6f86e8dc0c66515440d1ac595fcd04af2c",
+      "sha512": "9732fe647b094452a922a2e0783a1e18fdd1144008c22c86f4eeed3c8ede289299aa0c1638e7fb0239d5fff99656e6e9ed5f60ed6f67a0d5c62cc1fd1b6ea515",
+      "size": 7147
+    },
+    "tests/ai-limits.test.mjs": {
+      "mode": 420,
+      "sha256": "22059ca1ce0989e7f10da38e5180585f37d8a09a10aeaa584636a485f3a907e0",
+      "sha512": "48654dd92a46ce617e74e4d84cea5c79a23ee6da3455c0c3db4c6d69716060a504b196fe47ede54c0e4a869eb0b8999acee4e16bbddc3d8cc57a2925bdc8c990",
+      "size": 2512
+    },
+    "tests/ai.test.mjs": {
+      "mode": 420,
+      "sha256": "8bbd95ffd896cd98c8472326a42aabb46e314bcc097b6ab1b88495ce59c8ea57",
+      "sha512": "a46587fe1e120fdde13430cef920f5a6b5d1bd550113750156d4ae523a16a2adb9d7dd1270002dfb87a759812a1b49fdf9fbe3674f1e1a6962802f0cba119659",
+      "size": 11628
+    },
+    "tests/backup.test.mjs": {
+      "mode": 420,
+      "sha256": "c8924441a3800d89e1aed4f2327bd6a85f2ae4372f9b75b3efe4abef6e53ff48",
+      "sha512": "ddde67e0c38a8573da90a3b1bccbad2ac4d39c1c8d085831d38cc1c2525084d5d490315943787ff753832f66e4c5064de50470d188974645a24e251f003f0d9a",
+      "size": 1373
+    },
+    "tests/e2e/demo.spec.mjs": {
+      "mode": 420,
+      "sha256": "c65d6a008bad78c03492a7f45ac5cf3f6c938c889ad666f50d2de2fbfc9c36ed",
+      "sha512": "09a8fd1d856b7b7129b061bbbd29cdf1cc7659105feb7cb45ccd659e48b8fc8c4933cb7b6162443d749e8a6d721ca3ad45ccf17bc64178df1f90ab35b7f541c2",
+      "size": 7513
+    },
+    "tests/e2e/workspace.spec.mjs": {
+      "mode": 420,
+      "sha256": "c4939d5dd291792ae08b4466aa54b0dbefd45ba38931b99b24f30681fe8e4651",
+      "sha512": "4f7fb047d72342ca6eaf8291e2190d47aa36ce5027e47d904422282833887b4e73d2421ff182ec635ae788042c2a035dc89f993b9b3b0161158267970ddfce49",
+      "size": 13175
+    },
+    "tests/formula-parser.test.mjs": {
+      "mode": 420,
+      "sha256": "8ba0517f898045d36038f2e19d847151f617484baf40e5ee60e23da291f0da7b",
+      "sha512": "2daf08faff0a136acad79f8af4bfc71a183f8c8b702d4aa9f56f7891f79043b1db9d4919e8118f3fa066d3e211df2ab648f61486811309c824f2c87e368b4288",
+      "size": 1094
+    },
+    "tests/patch.test.mjs": {
+      "mode": 420,
+      "sha256": "619b6ffbdfe045c1d5f4f756130195efc52394d937af4d872f81edeba77ab3f6",
+      "sha512": "4b98de8626b9d1cd3237375f817867d5d574d67bad397ef85d0840774c88737d74abcdd5b05b4ab90d7d596abe36a3c21d5dc8081021aa3d1cc71485e1eafe8b",
+      "size": 1287
+    },
+    "tests/save-state.test.mjs": {
+      "mode": 420,
+      "sha256": "298a9319a907d4a52a6979c3bb002753bcde0d08c3d3767643b02808f2772b20",
+      "sha512": "7dc711ce17f6f31ee582f98c517bd577c161af6fe09bae6f8d6f0cf3151e68691c7817a549f0fd3f06a6fc24b1714d5d9be32bf50df9071753bc12367b5be7ec",
+      "size": 1527
+    },
+    "tests/serve.mjs": {
+      "mode": 420,
+      "sha256": "1ced29a1337e187fe766f88d341091d43fb7579695d2c9481532993562f2db1d",
+      "sha512": "9c2bf30553d8bb2cf8ca83728a8eb1257b42e43c1d19fb36fc051f21ecacb6b3542c184a236af91f590dee015a38f0ab5dcd1b01d56c7e8a4a270c5fda0cb928",
+      "size": 525
+    },
+    "tests/server.test.mjs": {
+      "mode": 420,
+      "sha256": "7d6d475a5c4590c51d5f28a3c6d43dd28647725af19a9d992e6f9ad3daa38bf0",
+      "sha512": "8809f80ed3a02902c0dcdc4daa63d01d979c29c22ac625d7e616b9500e81233bf9e457394e2001058d0a3a6cefb8a6a6de427f04a9d257871abe095d1aa903ac",
+      "size": 20156
+    },
+    "tests/workbook.test.mjs": {
+      "mode": 420,
+      "sha256": "a87db247df5900263a363145cf81736e10451f66f5c3597fcb115981aeb964b7",
+      "sha512": "575b0f3addf9fab1dff27eb78a0e7e37abaec2d9da34b69ba007e10c191b9b71f1f41374dc1fce1970cd0dabeefaa4b83b19245057b8628cac43c06b112ee869",
+      "size": 5669
+    },
+    "vite.config.mjs": {
+      "mode": 420,
+      "sha256": "2f7c2302f0fcaa74033c0b547ccef46c103021de37a06caeaabdcc5201f65f49",
+      "sha512": "19a4b4a3770d17398054776971dc17d46eeb2e6e250dc5920bc443af5b8a63a3321e2404a8973cebecc0d63b3922c5efa0acae659f075c416ff574a50f769aea",
+      "size": 447
+    }
+  },
+  "format": "secops-codemark-integrity-v1",
+  "project_id": "2f530e98-74a9-497e-98d2-70e1f8eee6ef",
+  "tool_version": "0.4.1",
+  "total_bytes": 5360843
+}
