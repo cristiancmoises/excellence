@@ -1,0 +1,40 @@
+{
+  "name": "excellence",
+  "version": "0.1.0-rc.1",
+  "private": true,
+  "description": "Excellence: planilhas livres com assist\u00eancia de IA, desktop e web",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "node scripts/patch-fortune.mjs && vite build",
+    "start": "node server/index.mjs",
+    "local": "node scripts/launch.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "playwright test",
+    "check": "npm test && npm run build",
+    "backup": "node scripts/backup.mjs",
+    "licenses": "node scripts/licenses.mjs",
+    "pretest": "node scripts/patch-fortune.mjs"
+  },
+  "dependencies": {
+    "@fortune-sheet/core": "1.0.4",
+    "@fortune-sheet/react": "1.0.4",
+    "chart.js": "4.5.1",
+    "exceljs": "4.4.0",
+    "lucide-react": "0.468.0",
+    "papaparse": "5.5.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "vite": "8.3.4"
+  },
+  "overrides": {
+    "uuid": "11.1.1"
+  }
+}

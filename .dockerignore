@@ -1,0 +1,14 @@
+node_modules
+.git
+data
+backups
+.env
+.superpowers
+test-results
+playwright-report
+*.zip
+*.sqlite*
+PROMPT*.md
+docs/superpowers
+docs/evidence
+docs/WORK_HANDOFF.md

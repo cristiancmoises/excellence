@@ -1,0 +1,22 @@
+{
+  "name": "Excellence",
+  "version": "0.1.0-rc.1",
+  "license": "MIT",
+  "implementation_commit": "ef97b611903c5153aa89db153c1027d4b78e9be9",
+  "status": "controlled-validation-release-candidate",
+  "runtime": "Node.js 24",
+  "date_utc": "2026-10-17",
+  "validation": {
+    "unit_integration_passed": 32,
+    "browser_flows_passed": 4,
+    "npm_known_vulnerabilities": 0,
+    "linux_install_smoke": "passed",
+    "windows_runtime": "not executed",
+    "docker_runtime": "not available"
+  },
+  "entrypoints": {
+    "local": "node scripts/launch.mjs",
+    "docker": "docker compose up -d --build"
+  },
+  "report": "docs/VALIDATION.md"
+}
