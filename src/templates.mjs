@@ -1,10 +1,12 @@
 import { blankWorkbook } from "./shared.mjs";
-function table(name, rows) {
-  const s = blankWorkbook(name)[0];
+import { translate } from "./i18n.mjs";
+function table(name, rows, language) {
+  const s = blankWorkbook(translate(name, language))[0];
   s.celldata = [];
   for (let r = 0; r < rows.length; r++)
     for (let c = 0; c < rows[r].length; c++) {
-      const x = rows[r][c];
+      const raw = rows[r][c];
+      const x = typeof raw === "string" && !raw.startsWith("=") ? translate(raw, language) : raw;
       s.celldata.push({
         r,
         c,
@@ -26,12 +28,12 @@ export const templates = {
   blank: {
     label: "Em branco",
     description: "Uma nova ideia começa aqui.",
-    create: () => blankWorkbook(),
+    create: (language = "en") => blankWorkbook(translate("Planilha1", language)),
   },
   budget: {
     label: "Orçamento",
     description: "Receitas, despesas e saldo.",
-    create: () =>
+    create: (language = "en") =>
       table("Orçamento", [
         ["Categoria", "Planejado", "Realizado", "Diferença"],
         ["Receitas", 15000, 16200, "=C2-B2"],
@@ -42,30 +44,30 @@ export const templates = {
         ["Outros", 400, 280, "=B7-C7"],
         ["Total despesas", "=SUM(B3:B7)", "=SUM(C3:C7)", "=B8-C8"],
         ["Saldo", "=B2-B8", "=C2-C8", "=C9-B9"],
-      ]),
+      ], language),
   },
   inventory: {
     label: "Inventário",
     description: "Estoque e valor em tempo real.",
-    create: () =>
+    create: (language = "en") =>
       table("Inventário", [
         ["Produto", "Quantidade", "Valor unitário", "Valor total"],
         ["Notebook", 6, 4200, "=B2*C2"],
         ["Monitor", 12, 980, "=B3*C3"],
         ["Teclado", 20, 180, "=B4*C4"],
         ["Total", "", "", "=SUM(D2:D4)"],
-      ]),
+      ], language),
   },
   projects: {
     label: "Projetos",
     description: "Prioridades, horas e responsáveis.",
-    create: () =>
+    create: (language = "en") =>
       table("Projetos", [
         ["Tarefa", "Responsável", "Horas previstas", "Horas reais"],
         ["Planejamento", "Equipe", 8, 6],
         ["Desenvolvimento", "Equipe", 40, 32],
         ["Validação", "Equipe", 16, 12],
         ["Total", "", "=SUM(C2:C4)", "=SUM(D2:D4)"],
-      ]),
+      ], language),
   },
 };

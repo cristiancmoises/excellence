@@ -3,7 +3,7 @@ import { spawn } from "node:child_process";
 import { homedir } from "node:os";
 import { join } from "node:path";
 if (Number(process.versions.node.split(".")[0]) !== 24) {
-  console.error("Excellence requer Node.js 24 LTS.");
+  console.error("Excellence requires Node.js 24 LTS.");
   process.exit(1);
 }
 const port = Number(process.env.PORT || 3210),
@@ -16,7 +16,7 @@ function open() {
         ? ["open", [url]]
         : ["xdg-open", [url]];
   const child = spawn(args[0], args[1], { stdio: "ignore", detached: true });
-  child.on("error", () => console.log("Abra no navegador: " + url));
+  child.on("error", () => console.log("Open in your browser: " + url));
   child.unref();
 }
 try {
@@ -41,17 +41,17 @@ const app = await createApp({
   dataDir: process.env.EXCELLENCE_DATA_DIR || join(base, "data"),
 });
 app.server.on("error", async (e) => {
-  console.error("Não foi possível iniciar:", e.code || e.message);
+  console.error("Could not start:", e.code || e.message);
   await app.close();
   process.exit(1);
 });
 app.server.listen(port, "127.0.0.1", () => {
   console.log(
-    `Excellence • ${url}\nMantenha esta janela aberta enquanto trabalha. Ctrl+C para encerrar.`,
+    `Excellence • ${url}\nKeep this window open while working. Press Ctrl+C to stop.`,
   );
   if (app.needsSetup())
     console.log(
-      `\nToken de instalação (copie no formulário): ${app.setupToken}\n`,
+      `\nSetup token (copy into the form): ${app.setupToken}\n`,
     );
   open();
 });

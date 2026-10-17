@@ -21,6 +21,7 @@ import { normalizeSheets, normalizeMeta } from "../src/shared.mjs";
 import { loadProviders, assist, validateAssist, validateDemoAssist, AssistError } from "./ai.mjs";
 import { createAiGuard } from "./ai-limits.mjs";
 import { withinDirectory } from "./fs-path.mjs";
+import { requestLanguage, translateError } from "../src/error-messages.mjs";
 const scrypt = promisify(scryptCb),
   sha = (x) => createHash("sha256").update(x).digest("hex"),
   random = () => randomBytes(32).toString("hex");
@@ -77,7 +78,7 @@ export async function createApp(options = {}) {
     options.setupToken || env.EXCELLENCE_SETUP_TOKEN || random();
   const providers = options.providers || loadProviders(env);
   const acquireAi = createAiGuard(db);
-  const infer = async (provider, input, response, release, demo = false) => {
+  const infer = async (provider, input, response, release, demo = false, language = "en") => {
     const controller = new AbortController();
     const disconnected = () => {
       if (!response.writableEnded) controller.abort();
@@ -86,7 +87,7 @@ export async function createApp(options = {}) {
     if (response.destroyed) controller.abort();
     let uncertain = false;
     try {
-      return await assist(provider, input, { demo, signal: controller.signal });
+      return await assist(provider, input, { demo, signal: controller.signal, language });
     } catch (error) {
       uncertain = error.inferenceUncertain === true;
       throw error;
@@ -200,11 +201,14 @@ export async function createApp(options = {}) {
     }
   };
   const server = http.createServer(async (req, res) => {
+    const language = requestLanguage(req.headers["accept-language"]);
     const send = (status, data) => {
       res.writeHead(status, {
         "content-type": "application/json; charset=utf-8",
+        "content-language": language,
       });
-      res.end(JSON.stringify(data));
+      res.end(JSON.stringify(typeof data.error === "string"
+        ? { ...data, error: translateError(data.error, language) } : data));
     };
     try {
       res.setHeader("X-Content-Type-Options", "nosniff");
@@ -262,7 +266,7 @@ export async function createApp(options = {}) {
           const source = sha(req.socket.remoteAddress || "unknown");
           const release = acquireAi(source, true);
           try {
-            return send(200, await infer(provider, input, res, release, true));
+            return send(200, await infer(provider, input, res, release, true, language));
           } catch (error) {
             return send(502, { error: error instanceof AssistError
               ? error.message : "Não foi possível obter uma proposta válida do modelo local." });
@@ -613,7 +617,7 @@ export async function createApp(options = {}) {
           if (!p) fail(400, "Provedor não configurado.");
           const release = acquireAi(user.id);
           try {
-            const result = await infer(p, input, res, release);
+            const result = await infer(p, input, res, release, false, language);
             audit(user.id, "ai.assist", p.id);
             return send(200, result);
           } catch (e) {

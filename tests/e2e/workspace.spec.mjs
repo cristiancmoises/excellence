@@ -9,90 +9,90 @@ test("planilha real: cálculo, persistência, temas, arquivos, gráfico e IA", a
     if (m.type() === "error") console.log("BROWSER", m.text());
   });
   await page.goto("/");
-  await page.getByLabel("Token de instalação").fill("browser-test-token");
-  await page.getByLabel("Usuário", { exact: true }).fill("admin");
+  await page.getByLabel("Setup token").fill("browser-test-token");
+  await page.getByLabel("Username", { exact: true }).fill("admin");
   await page
-    .getByLabel("Senha", { exact: true })
+    .getByLabel("Password", { exact: true })
     .fill("Browser-Test-Password-42");
-  await page.getByRole("button", { name: "Criar administrador" }).click();
+  await page.getByRole("button", { name: "Create administrator" }).click();
   await expect(
     page.getByText("Excellence", { exact: true }).first(),
   ).toBeVisible();
-  await page.getByLabel("Endereço da célula").fill("D2");
-  await page.getByRole("button", { name: "Ir para célula" }).click();
+  await page.getByLabel("Cell address").fill("D2");
+  await page.getByRole("button", { name: "Go to cell" }).click();
   await expect(page.getByTestId("cell-result")).toHaveText("1200");
-  await page.getByLabel("Endereço da célula").fill("A1");
-  await page.getByLabel("Valor ou fórmula").fill("10");
+  await page.getByLabel("Cell address").fill("A1");
+  await page.getByLabel("Value or formula").fill("10");
   await page
-    .getByRole("button", { name: "Aplicar célula", exact: true })
+    .getByRole("button", { name: "Apply cell", exact: true })
     .click();
   await expect(page.getByTestId("cell-result")).toHaveText("10");
-  await page.getByLabel("Endereço da célula").fill("B1");
-  await page.getByLabel("Valor ou fórmula").fill("=A1*2");
+  await page.getByLabel("Cell address").fill("B1");
+  await page.getByLabel("Value or formula").fill("=A1*2");
   await page
-    .getByRole("button", { name: "Aplicar célula", exact: true })
+    .getByRole("button", { name: "Apply cell", exact: true })
     .click();
   await expect(page.getByTestId("cell-result")).toHaveText("20");
-  await page.getByLabel("Endereço da célula").fill("B1");
-  await page.getByRole("button", { name: "Ir para célula" }).click();
+  await page.getByLabel("Cell address").fill("B1");
+  await page.getByRole("button", { name: "Go to cell" }).click();
   const clipboardGrid = await page.locator(".fortune-sheet-canvas").boundingBox();
   await page.mouse.click(clipboardGrid.x + 70, clipboardGrid.y + 35, { button: "right" });
   await page.getByText("Copy", { exact: true }).click();
-  await page.getByLabel("Endereço da célula").fill("C1");
-  await page.getByRole("button", { name: "Ir para célula" }).click();
+  await page.getByLabel("Cell address").fill("C1");
+  await page.getByRole("button", { name: "Go to cell" }).click();
   await page.mouse.click(clipboardGrid.x + 70, clipboardGrid.y + 35, { button: "right" });
   await page.getByText("Paste", { exact: true }).click();
-  await page.getByRole("button", { name: "Ir para célula" }).click();
+  await page.getByRole("button", { name: "Go to cell" }).click();
   await expect(page.getByTestId("cell-result")).toHaveText("20");
-  await page.getByRole("button", { name: "Salvar agora" }).click();
-  await expect(page.getByTestId("save-status")).toContainText("Salvo");
-  await page.getByRole("button", { name: "Temas", exact: true }).click();
-  await page.getByRole("button", { name: "Ametista", exact: true }).click();
+  await page.getByRole("button", { name: "Save now" }).click();
+  await expect(page.getByTestId("save-status")).toContainText("Saved");
+  await page.getByRole("button", { name: "Themes", exact: true }).click();
+  await page.getByRole("button", { name: "Amethyst", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "amethyst");
-  await page.getByRole("button", { name: "Fechar diálogo" }).click();
+  await page.getByRole("button", { name: "Close dialog" }).click();
   await page.reload();
   await expect(
-    page.getByRole("button", { name: "Salvar agora" }),
+    page.getByRole("button", { name: "Save now" }),
   ).toBeVisible();
-  await page.getByLabel("Endereço da célula").fill("B1");
+  await page.getByLabel("Cell address").fill("B1");
   await page
-    .getByRole("button", { name: "Ir para célula", exact: true })
+    .getByRole("button", { name: "Go to cell", exact: true })
     .click();
   await expect(page.getByTestId("cell-result")).toHaveText("20");
-  await page.getByRole("button", { name: "Exportar", exact: true }).click();
+  await page.getByRole("button", { name: "Export", exact: true }).click();
   const download = page.waitForEvent("download");
   await page
     .getByRole("button", { name: "Excel (.xlsx)", exact: true })
     .click();
   expect((await download).suggestedFilename()).toMatch(/\.xlsx$/);
-  await page.getByRole("button", { name: "Gráficos", exact: true }).click();
-  await page.getByLabel("Intervalo do gráfico").fill("A1:B4");
+  await page.getByRole("button", { name: "Charts", exact: true }).click();
+  await page.getByLabel("Chart range").fill("A1:B4");
   await page
-    .getByRole("button", { name: "Criar gráfico", exact: true })
+    .getByRole("button", { name: "Create chart", exact: true })
     .click();
   await expect(
-    page.getByRole("img", { name: "Gráfico da planilha" }),
+    page.getByRole("img", { name: "Spreadsheet chart" }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Assistente IA", exact: true })
+    .getByRole("button", { name: "AI assistant", exact: true })
     .click();
-  await expect(page.getByText("Nenhum provedor configurado.")).toBeVisible();
+  await expect(page.getByText("No provider configured.")).toBeVisible();
   expect(errors).toEqual([]);
 });
 async function login(page) {
   await page.goto("/");
-  await page.getByLabel("Usuário", { exact: true }).fill("admin");
+  await page.getByLabel("Username", { exact: true }).fill("admin");
   await page
-    .getByLabel("Senha", { exact: true })
+    .getByLabel("Password", { exact: true })
     .fill("Browser-Test-Password-42");
-  await page.getByRole("button", { name: "Entrar", exact: true }).click();
-  await expect(page.getByLabel("Endereço da célula")).toBeEnabled();
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(page.getByLabel("Cell address")).toBeEnabled();
 }
 async function enter(page, cell, value, result) {
-  await page.getByLabel("Endereço da célula").fill(cell);
-  await page.getByLabel("Valor ou fórmula").fill(value);
+  await page.getByLabel("Cell address").fill(cell);
+  await page.getByLabel("Value or formula").fill(value);
   await page
-    .getByRole("button", { name: "Aplicar célula", exact: true })
+    .getByRole("button", { name: "Apply cell", exact: true })
     .click();
   await expect(page.getByTestId("cell-result")).toHaveText(String(result));
 }
@@ -100,9 +100,9 @@ test("fórmulas comuns, alteração de dependências e referências entre abas",
   page,
 }) => {
   await login(page);
-  await page.getByRole("button", { name: "Novo", exact: true }).click();
+  await page.getByRole("button", { name: "New", exact: true }).click();
   await page
-    .getByRole("button", { name: "Orçamento Receitas, despesas e saldo." })
+    .getByRole("button", { name: "Budget Revenue, expenses and balance." })
     .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   for (const [f, v] of [
@@ -110,17 +110,17 @@ test("fórmulas comuns, alteração de dependências e referências entre abas",
     ["=AVERAGE(C3:C7)", 1808],
     ["=COUNT(B3:B7)", 5],
     ['=IF(B3>5000,"Sim","Não")', "Sim"],
-    ['=SUMIF(A3:A7,"Equipe",B3:B7)', 6500],
-    ['=VLOOKUP("Equipe",A3:C7,3,FALSE)', 6200],
+    ['=SUMIF(A3:A7,"Team",B3:B7)', 6500],
+    ['=VLOOKUP("Team",A3:C7,3,FALSE)', 6200],
     ["=IFERROR(1/0,0)", 0],
     ["=ROUND(1.235,2)", 1.24],
   ])
     await enter(page, "F1", f, v);
   await enter(page, "F2", "=B3*2", 13000);
   await enter(page, "B3", "7000", 7000);
-  await page.getByLabel("Endereço da célula").fill("F2");
+  await page.getByLabel("Cell address").fill("F2");
   await page
-    .getByRole("button", { name: "Ir para célula", exact: true })
+    .getByRole("button", { name: "Go to cell", exact: true })
     .click();
   await expect(page.getByTestId("cell-result")).toHaveText("14000");
   const native = {
@@ -154,7 +154,7 @@ test("fórmulas comuns, alteração de dependências e referências entre abas",
       buffer: Buffer.from(JSON.stringify(native)),
     });
   await page
-    .getByRole("button", { name: "Importar como nova planilha" })
+    .getByRole("button", { name: "Import as a new spreadsheet" })
     .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(
@@ -162,9 +162,9 @@ test("fórmulas comuns, alteração de dependências e referências entre abas",
   ).toBeVisible();
   await enter(page, "A1", "8", 8);
   await page.getByText("Resumo teste", { exact: true }).first().click();
-  await page.getByLabel("Endereço da célula").fill("A1");
+  await page.getByLabel("Cell address").fill("A1");
   await page
-    .getByRole("button", { name: "Ir para célula", exact: true })
+    .getByRole("button", { name: "Go to cell", exact: true })
     .click();
   await expect(page.getByTestId("cell-result")).toHaveText("24");
 });
@@ -172,10 +172,10 @@ test("resposta atrasada de salvar preserva título editado durante a requisiçã
   page,
 }) => {
   await login(page);
-  await page.getByRole("button", { name: "Configurações da conta" }).click();
-  await page.getByLabel("Salvamento automático").uncheck();
-  await page.getByRole("button", { name: "Fechar painel" }).click();
-  await page.getByLabel("Nome do arquivo").fill("Título capturado");
+  await page.getByRole("button", { name: "Account settings" }).click();
+  await page.getByLabel("Auto-save").uncheck();
+  await page.getByRole("button", { name: "Close panel" }).click();
+  await page.getByLabel("File name").fill("Título capturado");
   let release,
     intercepted = false;
   let signal;
@@ -188,20 +188,20 @@ test("resposta atrasada de salvar preserva título editado durante a requisiçã
     }
     await route.continue();
   });
-  await page.getByRole("button", { name: "Salvar agora" }).click();
+  await page.getByRole("button", { name: "Save now" }).click();
   await waiting;
-  await page.getByLabel("Nome do arquivo").fill("Título mais novo");
+  await page.getByLabel("File name").fill("Título mais novo");
   release();
   await expect(page.getByTestId("save-status")).toContainText(
-    "Alterações pendentes",
+    "Unsaved changes",
   );
-  await expect(page.getByLabel("Nome do arquivo")).toHaveValue(
+  await expect(page.getByLabel("File name")).toHaveValue(
     "Título mais novo",
   );
-  await page.getByRole("button", { name: "Salvar agora" }).click();
-  await expect(page.getByTestId("save-status")).toContainText("Salvo");
+  await page.getByRole("button", { name: "Save now" }).click();
+  await expect(page.getByTestId("save-status")).toContainText("Saved");
   await page.reload();
-  await expect(page.getByLabel("Nome do arquivo")).toHaveValue(
+  await expect(page.getByLabel("File name")).toHaveValue(
     "Título mais novo",
   );
 });
@@ -209,10 +209,10 @@ test("falha de salvar mantém edição recente; falta de espaço local mantém a
   page,
 }) => {
   await login(page);
-  await page.getByRole("button", { name: "Configurações da conta" }).click();
-  await page.getByLabel("Salvamento automático").uncheck();
-  await page.getByRole("button", { name: "Fechar painel" }).click();
-  await page.getByLabel("Nome do arquivo").fill("Falha capturada");
+  await page.getByRole("button", { name: "Account settings" }).click();
+  await page.getByLabel("Auto-save").uncheck();
+  await page.getByRole("button", { name: "Close panel" }).click();
+  await page.getByLabel("File name").fill("Falha capturada");
   let release,
     signal,
     used = false;
@@ -225,13 +225,13 @@ test("falha de salvar mantém edição recente; falta de espaço local mantém a
       await route.abort("failed");
     } else await route.continue();
   });
-  await page.getByRole("button", { name: "Salvar agora" }).click();
+  await page.getByRole("button", { name: "Save now" }).click();
   await waiting;
-  await page.getByLabel("Nome do arquivo").fill("Edição recente preservada");
+  await page.getByLabel("File name").fill("Edição recente preservada");
   await enter(page, "B2", "913", 913);
   release();
   await expect(page.getByTestId("save-status")).toContainText(
-    "Falha ao salvar",
+    "Save failed",
   );
   const recovery = await page.evaluate(() =>
     JSON.parse(
@@ -259,7 +259,7 @@ test("falha de salvar mantém edição recente; falta de espaço local mantém a
   await enter(page, "B3", "814", 814);
   await expect(
     page.getByText(
-      "A recuperação local está sem espaço. Salve no servidor ou exporte uma cópia antes de fechar.",
+      "Local recovery storage is full. Save to the server or export a copy before closing.",
     ),
   ).toBeVisible();
   const dialogPromise = page.waitForEvent("dialog");
@@ -307,7 +307,7 @@ test("interface compacta mantém comandos, menus e painéis acessíveis em telas
       expect(action.left).toBeGreaterThanOrEqual(0);
       expect(action.right).toBeLessThanOrEqual(width);
     }
-    await page.getByRole("button", { name: "Exportar", exact: true }).click();
+    await page.getByRole("button", { name: "Export", exact: true }).click();
     const menu = page.locator("#export-options");
     await expect(menu).toBeVisible();
     const bounds = await menu.boundingBox();
@@ -316,15 +316,15 @@ test("interface compacta mantém comandos, menus e painéis acessíveis em telas
     await page.keyboard.press("Escape");
     await expect(menu).toHaveCount(0);
     await expect(page.locator("#export-trigger")).toBeFocused();
-    await page.getByRole("button", { name: "Assistente IA", exact: true }).click();
+    await page.getByRole("button", { name: "AI assistant", exact: true }).click();
     const panel = await page.locator(".side-panel").boundingBox();
     expect(panel.x).toBeGreaterThanOrEqual(0);
     expect(panel.x + panel.width).toBeLessThanOrEqual(width);
-    await page.getByRole("button", { name: "Fechar painel" }).click();
+    await page.getByRole("button", { name: "Close panel" }).click();
     await page.screenshot({ path: testInfo.outputPath(`workspace-${width}.png`) });
   }
   await enter(page, "C2", "=SUM(4,5)", 9);
-  await page.getByRole("button", { name: "Salvar agora" }).click();
-  await expect(page.getByTestId("save-status")).toContainText("Salvo");
+  await page.getByRole("button", { name: "Save now" }).click();
+  await expect(page.getByTestId("save-status")).toContainText("Saved");
   expect(errors).toEqual([]);
 });

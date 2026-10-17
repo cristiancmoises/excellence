@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import { Workbook } from "@fortune-sheet/react";
+import { locale as gridLocale, excellenceSetPortugueseLocale } from "@fortune-sheet/core";
+import { portugueseGridLocale } from "./fortune-locale.mjs";
 import "@fortune-sheet/react/dist/index.css";
 import {
   Trophy,
@@ -50,6 +52,9 @@ import {
 import { templates } from "./templates.mjs";
 import "./style.css";
 import { acceptSaved, mayLeaveDocument } from "./save-state.mjs";
+import { LocaleContext, LocaleProvider, LanguagePicker, useLocale } from "./locale.jsx";
+import { translateError } from "./error-messages.mjs";
+excellenceSetPortugueseLocale(portugueseGridLocale(gridLocale({ lang: "en" })));
 const themes = [
   ["midnight", "Meia-noite", "#24c9d3"],
   ["paper", "Papel", "#228c77"],
@@ -116,6 +121,7 @@ function IconButton({ icon: Icon, children, ...props }) {
   );
 }
 function Dialog({ title, children, onClose, wide = false }) {
+  const { t } = useLocale();
   const ref = useRef();
   useEffect(() => {
     const prior = document.activeElement;
@@ -159,7 +165,7 @@ function Dialog({ title, children, onClose, wide = false }) {
       >
         <header>
           <h2>{title}</h2>
-          <button aria-label="Fechar diálogo" onClick={onClose}>
+          <button aria-label={t("Fechar diálogo")} onClick={onClose}>
             <X size={20} />
           </button>
         </header>
@@ -169,6 +175,7 @@ function Dialog({ title, children, onClose, wide = false }) {
   );
 }
 function Auth({ session, onAuth, api }) {
+  const { language, t } = useLocale();
   const [user, setUser] = useState(""),
     [password, setPassword] = useState(""),
     [token, setToken] = useState(""),
@@ -186,7 +193,7 @@ function Auth({ session, onAuth, api }) {
       });
       onAuth(s);
     } catch (e) {
-      setError(e.message);
+      setError(translateError(e.message, language));
     } finally {
       setBusy(false);
     }
@@ -195,21 +202,15 @@ function Auth({ session, onAuth, api }) {
     <div className="auth">
       <div className="auth-story">
         <div className="brand">
-          <img src="/trophy.svg" alt="Troféu" />
+          <img src="/trophy.svg" alt={t("Troféu")} />
           <span>Excellence</span>
-          <small>PLANILHAS LIVRES</small>
+          <small>{" "}{t("PLANILHAS LIVRES")}{" "}</small>
         </div>
-        <span className="eyebrow">DÊ ESPAÇO ÀS SUAS IDEIAS</span>
-        <h1>
-          Grandes resultados.
-          <br />
-          <em>Célula por célula.</em>
+        <span className="eyebrow">{" "}{t("DÊ ESPAÇO ÀS SUAS IDEIAS")}{" "}</span>
+        <h1>{" "}{t("Grandes resultados.")}{" "}<br />
+          <em>{" "}{t("Célula por célula.")}{" "}</em>
         </h1>
-        <p>
-          Calcule, descubra e crie com liberdade.
-          <br />
-          Seus arquivos, seus modelos, seu espaço.
-        </p>
+        <p>{" "}{t("Calcule, descubra e crie com liberdade.")}{" "}<br />{" "}{t("Seus arquivos, seus modelos, seu espaço.")}{" "}</p>
         <div className="story-grid" aria-hidden="true">
           {[
             "A",
@@ -217,19 +218,19 @@ function Auth({ session, onAuth, api }) {
             "C",
             "D",
             "1",
-            "Categoria",
-            "Planejado",
-            "Realizado",
+            t("Categoria"),
+            t("Planejado"),
+            t("Realizado"),
             "2",
-            "Equipe",
-            "6.500",
-            "6.200",
+            t("Equipe"),
+            (6500).toLocaleString(language === "pt-BR" ? "pt-BR" : "en-US"),
+            (6200).toLocaleString(language === "pt-BR" ? "pt-BR" : "en-US"),
             "3",
-            "Infraestrutura",
-            "1.200",
-            "1.050",
+            t("Infraestrutura"),
+            (1200).toLocaleString(language === "pt-BR" ? "pt-BR" : "en-US"),
+            (1050).toLocaleString(language === "pt-BR" ? "pt-BR" : "en-US"),
             "4",
-            "Saldo",
+            t("Saldo"),
             "=C2−B2",
             "+ 300",
           ].map((x, i) => (
@@ -237,40 +238,34 @@ function Auth({ session, onAuth, api }) {
           ))}
         </div>
         <footer>
-          <ShieldCheck size={15} /> Código aberto · Licença MIT · Sem telemetria
-          própria
-        </footer>
+          <ShieldCheck size={15} />{" "}{t("Código aberto · Licença MIT · Sem telemetria própria")}{" "}</footer>
       </div>
       <main className="auth-form">
+        <LanguagePicker />
         <span className="pill">
-          <Lock size={13} /> SEU ESPAÇO DE TRABALHO
-        </span>
+          <Lock size={13} />{" "}{t("SEU ESPAÇO DE TRABALHO")}{" "}</span>
         <h2>
           {session.setupRequired
-            ? "Bem-vindo ao Excellence."
-            : "Bom ter você de volta."}
+            ? t("Bem-vindo ao Excellence.")
+            : t("Bom ter você de volta.")}
         </h2>
         <p>
           {session.setupRequired
-            ? "Crie o administrador desta instalação."
-            : "Entre para acessar suas planilhas."}
+            ? t("Crie o administrador desta instalação.")
+            : t("Entre para acessar suas planilhas.")}
         </p>
         <form onSubmit={submit}>
           {session.setupRequired && (
-            <label>
-              Token de instalação
-              <input
+            <label>{" "}{t("Token de instalação")}{" "}<input
                 autoComplete="off"
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
                 required
               />
-              <small>Exibido no terminal que iniciou o Excellence.</small>
+              <small>{" "}{t("Exibido no terminal que iniciou o Excellence.")}{" "}</small>
             </label>
           )}
-          <label>
-            Usuário
-            <input
+          <label>{" "}{t("Usuário")}{" "}<input
               autoComplete="username"
               value={user}
               onChange={(e) => setUser(e.target.value)}
@@ -279,9 +274,7 @@ function Auth({ session, onAuth, api }) {
               maxLength={48}
             />
           </label>
-          <label>
-            Senha
-            <input
+          <label>{" "}{t("Senha")}{" "}<input
               type="password"
               autoComplete={
                 session.setupRequired ? "new-password" : "current-password"
@@ -293,7 +286,7 @@ function Auth({ session, onAuth, api }) {
             />
           </label>
           {session.setupRequired && (
-            <small>A senha precisa ter pelo menos 12 caracteres.</small>
+            <small>{" "}{t("A senha precisa ter pelo menos 12 caracteres.")}{" "}</small>
           )}
           {error && (
             <p role="alert" className="error">
@@ -302,22 +295,20 @@ function Auth({ session, onAuth, api }) {
           )}
           <button className="primary" disabled={busy}>
             {busy
-              ? "Aguarde…"
+              ? t("Aguarde…")
               : session.setupRequired
-                ? "Criar administrador"
-                : "Entrar"}
+                ? t("Criar administrador")
+                : t("Entrar")}
             <ArrowRight size={17} />
           </button>
         </form>
-        <p className="auth-note">
-          Executado na sua infraestrutura.
-          <br />A IA só recebe dados quando você solicita.
-        </p>
+        <p className="auth-note">{" "}{t("Executado na sua infraestrutura.")}{" "}<br />{" "}{t("A IA só recebe dados quando você solicita.")}{" "}</p>
       </main>
     </div>
   );
 }
 function ChartPreview({ config, sheet, theme }) {
+  const { language, t } = useLocale();
   const ref = useRef(),
     [error, setError] = useState(""),
     [rows, setRows] = useState([]);
@@ -339,7 +330,7 @@ function ChartPreview({ config, sheet, theme }) {
             labels: matrix.slice(1).map((r) => String(r[0])),
             datasets: [
               {
-                label: String(matrix[0]?.[1] || "Valor"),
+                label: String(matrix[0]?.[1] || t("Valor")),
                 data: matrix.slice(1).map((r) => Number(r[1]) || 0),
                 backgroundColor: [
                   "#24c9d3",
@@ -355,6 +346,7 @@ function ChartPreview({ config, sheet, theme }) {
             ],
           },
           options: {
+            locale: language === "pt-BR" ? "pt-BR" : "en-US",
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -379,14 +371,14 @@ function ChartPreview({ config, sheet, theme }) {
           },
         });
       } catch (e) {
-        setError(e.message);
+        setError(translateError(e.message, language));
       }
     })();
     return () => {
       cancel = true;
       chart?.destroy();
     };
-  }, [sheet, config, theme]);
+  }, [sheet, config, theme, language]);
   return (
     <div className="chart-preview">
       {error ? (
@@ -394,10 +386,10 @@ function ChartPreview({ config, sheet, theme }) {
       ) : (
         <>
           <div className="chart-canvas">
-            <canvas ref={ref} role="img" aria-label="Gráfico da planilha" />
+            <canvas ref={ref} role="img" aria-label={t("Gráfico da planilha")} />
           </div>
           <details>
-            <summary>Dados do gráfico</summary>
+            <summary>{" "}{t("Dados do gráfico")}{" "}</summary>
             <table>
               <tbody>
                 {rows.map((r, i) => (
@@ -416,13 +408,19 @@ function ChartPreview({ config, sheet, theme }) {
   );
 }
 function App() {
+  const { t } = useLocale();
   if (/^\/demo\/?$/.test(window.location.pathname))
     return (
-      <Workspace demo user={{ id: "demo", username: "Visitante", role: "demo" }} />
+      <Workspace demo user={{ id: "demo", username: t("Visitante"), role: "demo" }} />
     );
   return <SessionApp />;
 }
 function SessionApp() {
+  const { language, t } = useLocale();
+  const languageRef = useRef(language);
+  languageRef.current = language;
+  const translateRef = useRef(t);
+  translateRef.current = t;
   const [session, setSession] = useState(null),
     csrf = useRef("");
   const api = useCallback(async (path, method = "GET", body) => {
@@ -430,6 +428,7 @@ function SessionApp() {
       method,
       headers: {
         "content-type": "application/json",
+        "accept-language": languageRef.current,
         ...(csrf.current ? { "x-csrf-token": csrf.current } : {}),
       },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
@@ -439,11 +438,11 @@ function SessionApp() {
       data = await r.json();
     } catch {
       throw Error(
-        "Servidor indisponível. Seu trabalho continua na memória desta página.",
+        translateRef.current("Servidor indisponível. Seu trabalho continua na memória desta página."),
       );
     }
     if (!r.ok) {
-      const e = Error(data.error || "Falha na operação.");
+      const e = Error(data.error || translateRef.current("Falha na operação."));
       e.status = r.status;
       throw e;
     }
@@ -460,16 +459,16 @@ function SessionApp() {
     return (
       <div className="loading">
         <Trophy />
-        <h2>Não foi possível conectar</h2>
+        <h2>{" "}{t("Não foi possível conectar")}{" "}</h2>
         <p>{fatal}</p>
-        <button onClick={() => location.reload()}>Tentar novamente</button>
+        <button onClick={() => location.reload()}>{" "}{t("Tentar novamente")}{" "}</button>
       </div>
     );
   if (!session)
     return (
       <div className="loading">
         <img src="/trophy.svg" alt="" />
-        <p>Abrindo Excellence…</p>
+        <p>{" "}{t("Abrindo Excellence…")}{" "}</p>
       </div>
     );
   if (!session.user)
@@ -484,11 +483,12 @@ function SessionApp() {
   );
 }
 function Workspace({ user, api, logout, demo = false }) {
+  const { language, t } = useLocale();
   const first = useRef({
     id: null,
-    title: demo ? "Orçamento de demonstração" : "Meu orçamento",
+    title: demo ? t("Orçamento de demonstração") : t("Meu orçamento"),
     revision: 0,
-    sheets: normalizeSheets(templates.budget.create()),
+    sheets: normalizeSheets(templates.budget.create(language)),
     meta: { charts: [] },
   });
   const current = useRef(first.current),
@@ -554,7 +554,7 @@ function Workspace({ user, api, logout, demo = false }) {
   );
   const recoveryKey = "excellence-recovery-" + user.id;
   function notice(text) {
-    setMessage(text);
+    setMessage(translateError(text, language));
   }
   async function refreshFiles() {
     const data = await api("/workbooks");
@@ -592,7 +592,7 @@ function Workspace({ user, api, logout, demo = false }) {
       if (!recoveryWarning.current) {
         recoveryWarning.current = true;
         notice(
-          "A recuperação local está sem espaço. Salve no servidor ou exporte uma cópia antes de fechar.",
+          t("A recuperação local está sem espaço. Salve no servidor ou exporte uma cópia antes de fechar."),
         );
       }
     }
@@ -666,7 +666,7 @@ function Workspace({ user, api, logout, demo = false }) {
           copy || !snapshot.id ? "POST" : "PUT",
           {
             ...snapshot,
-            title: copy ? snapshot.title + " (cópia)" : snapshot.title,
+            title: copy ? snapshot.title + t(" (cópia)") : snapshot.title,
           },
         );
         current.current = acceptSaved(current.current, snapshot, result, copy);
@@ -818,11 +818,11 @@ function Workspace({ user, api, logout, demo = false }) {
     load({
       id: null,
       title:
-        templates[key].label === "Em branco"
-          ? "Sem título"
-          : templates[key].label,
+        key === "blank"
+          ? t("Sem título")
+          : t(templates[key].label),
       revision: 0,
-      sheets: templates[key].create(),
+      sheets: templates[key].create(language),
       meta: { charts: [] },
     });
     setDialog(null);
@@ -838,7 +838,7 @@ function Workspace({ user, api, logout, demo = false }) {
           await toXlsx(sheets),
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         );
-        notice("XLSX exportado. Recursos avançados ficam no formato nativo.");
+        notice(t("XLSX exportado. Recursos avançados ficam no formato nativo."));
       } else if (type === "csv") {
         download(
           fname(title) + ".csv",
@@ -870,7 +870,7 @@ function Workspace({ user, api, logout, demo = false }) {
     input.current.value = "";
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
-      notice("Arquivo excede 10 MB.");
+      notice(t("Arquivo excede 10 MB."));
       return;
     }
     setDialog({ type: "import", file });
@@ -888,10 +888,10 @@ function Workspace({ user, api, logout, demo = false }) {
       } else if (/\.json$/i.test(file.name)) {
         const data = JSON.parse(await file.text());
         if (data.format !== "excellence" || data.formatVersion !== 1)
-          throw Error("Formato nativo inválido.");
+          throw Error(t("Formato nativo inválido."));
         sheets = normalizeSheets(data.sheets);
         metadata = data.meta || metadata;
-      } else throw Error("Use XLSX, CSV ou Excellence JSON.");
+      } else throw Error(t("Use XLSX, CSV ou Excellence JSON."));
       if (!(await save())) return;
       load({
         id: null,
@@ -903,7 +903,7 @@ function Workspace({ user, api, logout, demo = false }) {
       setDialog(null);
       notice(
         warnings[0] ||
-          "Arquivo importado. Salve para mantê-lo nesta instalação.",
+          t("Arquivo importado. Salve para mantê-lo nesta instalação."),
       );
     } catch (e) {
       notice(e.message);
@@ -942,7 +942,7 @@ function Workspace({ user, api, logout, demo = false }) {
     try {
       const q = parseRange(address);
       if (q.r1 !== q.r2 || q.c1 !== q.c2)
-        throw Error("Escolha uma célula para editar.");
+        throw Error(t("Escolha uma célula para editar."));
       pendingCell.current = address;
       setCellResult("…");
       grid.current.batchCallApis([
@@ -987,7 +987,7 @@ function Workspace({ user, api, logout, demo = false }) {
         matrix = sheetMatrix(s, selection);
       const cellLimit = demo ? 20 : 500;
       if (matrix.flat().length > cellLimit)
-        throw Error(`Selecione até ${cellLimit} células.`);
+        throw Error(t("Selecione até {count} células.", { count: cellLimit }));
       const cells = matrix.flatMap((row, r) =>
         row.map((v, c) => ({
           cell: columnName(c + q.c1) + (r + q.r1 + 1),
@@ -999,17 +999,17 @@ function Workspace({ user, api, logout, demo = false }) {
       if (demo) {
         const body = JSON.stringify({ prompt, selection, cells });
         if (prompt.length > 300 || new TextEncoder().encode(body).length > 1500)
-          throw Error("Reduza a seleção ou a pergunta: a demonstração aceita até 300 caracteres e 1.500 bytes por pedido.");
+          throw Error(t("Reduza a seleção ou a pergunta: a demonstração aceita até 300 caracteres e 1.500 bytes por pedido."));
         const response = await fetch("/api/demo/ai/assist", {
           method: "POST",
           credentials: "omit",
-          headers: { "content-type": "application/json" },
+          headers: { "content-type": "application/json", "accept-language": language },
           body,
           signal: AbortSignal.timeout(35000),
         });
         const result = await response.json();
         if (!response.ok)
-          throw Error(result.error || "A IA de demonstração não está disponível agora.");
+          throw Error(result.error || t("A IA de demonstração não está disponível agora."));
         setAiResult(result);
       } else {
         setAiResult(
@@ -1018,7 +1018,7 @@ function Workspace({ user, api, logout, demo = false }) {
       }
     } catch (e) {
       notice(e.name === "TimeoutError"
-        ? "A consulta demorou mais que o esperado. Aguarde antes de tentar novamente."
+        ? t("A consulta demorou mais que o esperado. Aguarde antes de tentar novamente.")
         : e.message);
     } finally {
       setAiBusy(false);
@@ -1032,7 +1032,7 @@ function Workspace({ user, api, logout, demo = false }) {
         epoch.current !== aiContext.epoch
       )
         throw Error(
-          "A planilha mudou. Solicite uma nova proposta antes de aplicar.",
+          t("A planilha mudou. Solicite uma nova proposta antes de aplicar."),
         );
       const p = validateProposal(aiResult.proposal, aiContext.selection);
       grid.current.batchCallApis(
@@ -1042,7 +1042,7 @@ function Workspace({ user, api, logout, demo = false }) {
         }),
       );
       setAiResult(null);
-      notice("Proposta aplicada. Use Desfazer se necessário.");
+      notice(t("Proposta aplicada. Use Desfazer se necessário."));
     } catch (e) {
       notice(e.message);
     }
@@ -1051,7 +1051,7 @@ function Workspace({ user, api, logout, demo = false }) {
     try {
       const rows = sheetMatrix(activeSheet(), chartRange);
       if (rows.length < 2 || rows[0].length !== 2 || rows.length > 501)
-        throw Error("Use duas colunas, cabeçalho e até 500 linhas.");
+        throw Error(t("Use duas colunas, cabeçalho e até 500 linhas."));
       const cfg = {
         id: crypto.randomUUID(),
         sheetId: activeSheet().id,
@@ -1079,6 +1079,9 @@ function Workspace({ user, api, logout, demo = false }) {
           Number(pivotValue),
           pivotOp,
         );
+      p.name = t("Resumo") + " " + new Date().toISOString().slice(11, 19).replaceAll(":", "");
+      if (!sheetMatrix(activeSheet(sheets))[0]?.[Number(pivotKey)]) p.celldata[0].v.v = t("Grupo");
+      p.celldata[1].v.v = t({ sum: "Soma", count: "Contagem", average: "Média", min: "Mínimo", max: "Máximo" }[pivotOp]);
       sheets.forEach((s) => (s.status = 0));
       p.status = 1;
       const next = { ...current.current, sheets: [...sheets, p] };
@@ -1086,7 +1089,7 @@ function Workspace({ user, api, logout, demo = false }) {
       dirty();
       setDialog(null);
       notice(
-        "Resumo criado em uma nova aba. Gere novamente se os dados mudarem.",
+        t("Resumo criado em uma nova aba. Gere novamente se os dados mudarem."),
       );
     } catch (e) {
       notice(e.message);
@@ -1140,18 +1143,18 @@ function Workspace({ user, api, logout, demo = false }) {
           grid.current.batchCallApis(calls);
         }
       } catch (e) {
-        notice("Falha ao recalcular: " + e.message);
+        notice(t("Falha ao recalcular: ") + e.message);
       }
     });
     return () => cancelAnimationFrame(frame);
   }, [ready, engineReady, gridKey]);
   const labels = {
-    draft: demo ? "Somente nesta sessão" : "Rascunho",
-    dirty: demo ? "Alterações nesta sessão" : "Alterações pendentes",
-    saving: "Salvando…",
-    saved: "Salvo",
-    conflict: "Conflito de versões",
-    error: "Falha ao salvar",
+    draft: demo ? t("Somente nesta sessão") : t("Rascunho"),
+    dirty: demo ? t("Alterações nesta sessão") : t("Alterações pendentes"),
+    saving: t("Salvando…"),
+    saved: t("Salvo"),
+    conflict: t("Conflito de versões"),
+    error: t("Falha ao salvar"),
   };
   return (
     <div
@@ -1166,32 +1169,32 @@ function Workspace({ user, api, logout, demo = false }) {
           if (event.dataTransfer.files.length) {
             event.preventDefault();
             event.stopPropagation();
-            notice("Uploads não estão disponíveis na demonstração.");
+            notice(t("Uploads não estão disponíveis na demonstração."));
           }
         } : undefined}
       onPasteCapture={demo ? (event) => {
           if (event.clipboardData.files.length) {
             event.preventDefault();
             event.stopPropagation();
-            notice("Uploads não estão disponíveis na demonstração.");
+            notice(t("Uploads não estão disponíveis na demonstração."));
           }
         } : undefined}
     >
       {demo && (
         <div className="demo-banner" role="note">
           <strong>DEMO</strong>
-          <span>Dados fictícios. Edições temporárias, sem uploads. Recarregar reinicia a planilha.</span>
-          <a href="/">Entrar</a>
+          <span>{" "}{t("Dados fictícios. Edições temporárias, sem uploads. Recarregar reinicia a planilha.")}{" "}</span>
+          <a href={"/?lang=" + language}>{" "}{t("Entrar")}{" "}</a>
         </div>
       )}
       <header className="app-header">
         <div className="brand">
-          <img src="/trophy.svg" alt="Troféu" />
+          <img src="/trophy.svg" alt={t("Troféu")} />
           <span>Excellence</span>
         </div>
         <div className="title-block">
           <input
-            aria-label="Nome do arquivo"
+            aria-label={t("Nome do arquivo")}
             value={title}
             onChange={(e) => {
               setTitle(e.target.value);
@@ -1210,44 +1213,36 @@ function Workspace({ user, api, logout, demo = false }) {
           </span>
         </div>
         <div className="header-actions">
+          <LanguagePicker />
           <span className="local-badge">
-            <ShieldCheck size={13} /> Seu espaço
-          </span>
+            <ShieldCheck size={13} />{" "}{t("Seu espaço")}{" "}</span>
           <IconButton
             icon={Sparkles}
             className={panel === "ai" ? "ai-button active" : "ai-button"}
             aria-pressed={panel === "ai"}
-            aria-label="Assistente IA"
+            aria-label={t("Assistente IA")}
             onClick={() => choosePanel("ai")}
-          >
-            Assistente IA
-          </IconButton>
+          >{" "}{t("Assistente IA")}{" "}</IconButton>
           {!demo && <button
             className="avatar"
-            title={"Configurações de " + user.username}
-            aria-label="Configurações da conta"
+            title={t("Configurações de ") + user.username}
+            aria-label={t("Configurações da conta")}
             onClick={() => choosePanel("settings")}
           >
             {user.username.slice(0, 2).toUpperCase()}
           </button>}
         </div>
       </header>
-      <nav className="menu-bar" aria-label="Ferramentas da pasta de trabalho">
-        <div className="command-group" role="group" aria-label="Arquivo">
+      <nav className="menu-bar" aria-label={t("Ferramentas da pasta de trabalho")}>
+        <div className="command-group" role="group" aria-label={t("Arquivo")}>
           {!demo && <IconButton
             icon={FolderOpen}
             onClick={() => choosePanel("files")}
             className={panel === "files" ? "active" : ""}
             aria-pressed={panel === "files"}
-          >
-            Arquivos
-          </IconButton>}
-          <IconButton icon={Plus} onClick={() => setDialog({ type: "new" })}>
-            Novo
-          </IconButton>
-          {!demo && <IconButton icon={Upload} onClick={() => input.current.click()}>
-            Importar
-          </IconButton>}
+          >{" "}{t("Arquivos")}{" "}</IconButton>}
+          <IconButton icon={Plus} onClick={() => setDialog({ type: "new" })}>{" "}{t("Novo")}{" "}</IconButton>
+          {!demo && <IconButton icon={Upload} onClick={() => input.current.click()}>{" "}{t("Importar")}{" "}</IconButton>}
           <div className="dropdown">
             <IconButton
               id="export-trigger"
@@ -1255,18 +1250,14 @@ function Workspace({ user, api, logout, demo = false }) {
               aria-expanded={menu === "export"}
               aria-controls={menu === "export" ? "export-options" : undefined}
               onClick={() => setMenu(menu === "export" ? "" : "export")}
-            >
-              Exportar
-              <ChevronDown size={12} />
+            >{" "}{t("Exportar")}{" "}<ChevronDown size={12} />
             </IconButton>
             {menu === "export" && (
-              <div className="dropdown-menu" id="export-options" aria-label="Formatos de exportação">
+              <div className="dropdown-menu" id="export-options" aria-label={t("Formatos de exportação")}>
                 <button onClick={() => exportFile("xlsx")}>
                   Excel (.xlsx)
                 </button>
-                <button onClick={() => exportFile("csv")}>
-                  CSV seguro (.csv)
-                </button>
+                <button onClick={() => exportFile("csv")}>{" "}{t("CSV seguro (.csv)")}{" "}</button>
                 <button onClick={() => exportFile("json")}>
                   Excellence (.json)
                 </button>
@@ -1276,39 +1267,27 @@ function Workspace({ user, api, logout, demo = false }) {
           {!demo && <><span className="divider" />
           <IconButton
             icon={Save}
-            aria-label="Salvar agora"
+            aria-label={t("Salvar agora")}
             onClick={() => save()}
             disabled={status === "saving"}
-          >
-            Salvar
-          </IconButton></>}
+          >{" "}{t("Salvar")}{" "}</IconButton></>}
           {status === "conflict" && (
-            <button className="warning-text" onClick={() => save(true)}>
-              Salvar cópia
-            </button>
+            <button className="warning-text" onClick={() => save(true)}>{" "}{t("Salvar cópia")}{" "}</button>
           )}
         </div>
-        <div className="command-group" role="group" aria-label="Análise e exibição">
-          <IconButton icon={ChartColumn} aria-pressed={panel === "charts"} onClick={() => choosePanel("charts")}>
-            Gráficos
-          </IconButton>
+        <div className="command-group" role="group" aria-label={t("Análise e exibição")}>
+          <IconButton icon={ChartColumn} aria-pressed={panel === "charts"} onClick={() => choosePanel("charts")}>{" "}{t("Gráficos")}{" "}</IconButton>
           <IconButton
             icon={Table2}
             onClick={() => setDialog({ type: "pivot" })}
-          >
-            Resumo
-          </IconButton>
+          >{" "}{t("Resumo")}{" "}</IconButton>
           <IconButton
             icon={Palette}
             onClick={() => setDialog({ type: "themes" })}
-          >
-            Temas
-          </IconButton>
-          {!demo && <IconButton icon={History} aria-pressed={panel === "history"} onClick={() => choosePanel("history")}>
-            Histórico
-          </IconButton>}
+          >{" "}{t("Temas")}{" "}</IconButton>
+          {!demo && <IconButton icon={History} aria-pressed={panel === "history"} onClick={() => choosePanel("history")}>{" "}{t("Histórico")}{" "}</IconButton>}
           <button
-            aria-label="Ajuda"
+            aria-label={t("Ajuda")}
             onClick={() => setDialog({ type: "help" })}
           >
             <HelpCircle size={17} />
@@ -1326,9 +1305,9 @@ function Workspace({ user, api, logout, demo = false }) {
         {panel === "files" && (
           <aside className="file-panel">
             <div className="panel-title">
-              <h2>Suas planilhas</h2>
+              <h2>{" "}{t("Suas planilhas")}{" "}</h2>
               <button
-                aria-label="Fechar arquivos"
+                aria-label={t("Fechar arquivos")}
                 onClick={() => setPanel(null)}
               >
                 <X size={17} />
@@ -1337,8 +1316,8 @@ function Workspace({ user, api, logout, demo = false }) {
             <label className="search">
               <Search size={15} />
               <input
-                aria-label="Buscar arquivos"
-                placeholder="Buscar arquivo…"
+                aria-label={t("Buscar arquivos")}
+                placeholder={t("Buscar arquivo…")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -1347,9 +1326,8 @@ function Workspace({ user, api, logout, demo = false }) {
               className="primary"
               onClick={() => setDialog({ type: "new" })}
             >
-              <Plus size={16} /> Nova planilha
-            </button>
-            <span className="eyebrow">NESTA INSTALAÇÃO</span>
+              <Plus size={16} />{" "}{t("Nova planilha")}{" "}</button>
+            <span className="eyebrow">{" "}{t("NESTA INSTALAÇÃO")}{" "}</span>
             {files
               .filter((f) =>
                 f.title.toLowerCase().includes(search.toLowerCase()),
@@ -1367,13 +1345,12 @@ function Workspace({ user, api, logout, demo = false }) {
                     <span>
                       {f.title}
                       <small>
-                        {new Date(f.updated).toLocaleDateString("pt-BR")} ·
-                        revisão {f.revision}
+                        {new Date(f.updated).toLocaleDateString(language === "pt-BR" ? "pt-BR" : "en-US")}{" "}{t("· revisão")}{" "}{f.revision}
                       </small>
                     </span>
                   </button>
                   <button
-                    aria-label={"Excluir " + f.title}
+                    aria-label={t("Excluir ") + f.title}
                     onClick={() => setDialog({ type: "delete", file: f })}
                   >
                     <Trash2 size={14} />
@@ -1381,20 +1358,15 @@ function Workspace({ user, api, logout, demo = false }) {
                 </div>
               ))}
             {!files.length && (
-              <p className="muted">
-                Seus arquivos aparecerão aqui após salvar.
-              </p>
+              <p className="muted">{" "}{t("Seus arquivos aparecerão aqui após salvar.")}{" "}</p>
             )}
-            <p className="panel-note">
-              Até 100 arquivos e 50 MB por conta. Cada arquivo mantém até 20
-              revisões.
-            </p>
+            <p className="panel-note">{" "}{t("Até 100 arquivos e 50 MB por conta. Cada arquivo mantém até 20 revisões.")}{" "}</p>
           </aside>
         )}
-        <main className="sheet-main" aria-label="Editor de planilhas">
+        <main className="sheet-main" aria-label={t("Editor de planilhas")}>
           <div className="formula-bar">
             <input
-              aria-label="Endereço da célula"
+              aria-label={t("Endereço da célula")}
               disabled={!ready}
               value={address}
               onChange={(e) => setAddress(e.target.value.toUpperCase())}
@@ -1403,17 +1375,17 @@ function Workspace({ user, api, logout, demo = false }) {
               }}
             />
             <button
-              aria-label="Ir para célula"
-              title="Ir para célula"
+              aria-label={t("Ir para célula")}
+              title={t("Ir para célula")}
               onClick={goCell}
             >
               <ArrowRight size={14} />
             </button>
             <span className="fx">ƒx</span>
             <input
-              aria-label="Valor ou fórmula"
+              aria-label={t("Valor ou fórmula")}
               disabled={!ready}
-              placeholder="Digite um valor ou =SUM(A1:A10)"
+              placeholder={t("Digite um valor ou =SUM(A1:A10)")}
               value={edit}
               onChange={(e) => setEdit(e.target.value)}
               onKeyDown={(e) => {
@@ -1421,14 +1393,14 @@ function Workspace({ user, api, logout, demo = false }) {
               }}
             />
             <button
-              aria-label="Aplicar célula"
+              aria-label={t("Aplicar célula")}
               disabled={!ready}
-              title="Aplicar célula"
+              title={t("Aplicar célula")}
               onClick={applyCell}
             >
               <Check size={17} />
             </button>
-            <output data-testid="cell-result" aria-label="Resultado da célula">
+            <output data-testid="cell-result" aria-label={t("Resultado da célula")}>
               {cellResult}
             </output>
           </div>
@@ -1438,8 +1410,8 @@ function Workspace({ user, api, logout, demo = false }) {
                 key={gridKey}
                 ref={grid}
                 data={initial}
-                lang="en"
-                currency="R$"
+                lang={language}
+                currency={language === "pt-BR" ? "R$" : "$"}
                 showFormulaBar={false}
                 toolbarItems={toolbar}
                 cellContextMenu={[
@@ -1467,7 +1439,7 @@ function Workspace({ user, api, logout, demo = false }) {
                 onChange={stableChanged}
               />
             ) : (
-              <div className="loading">Abrindo planilhas…</div>
+              <div className="loading">{" "}{t("Abrindo planilhas…")}{" "}</div>
             )}
           </div>
         </main>
@@ -1477,47 +1449,34 @@ function Workspace({ user, api, logout, demo = false }) {
               <h2>
                 {panel === "ai" ? (
                   <>
-                    <Sparkles size={18} /> Assistente IA
-                  </>
+                    <Sparkles size={18} />{" "}{t("Assistente IA")}{" "}</>
                 ) : panel === "charts" ? (
-                  "Gráficos"
+                  t("Gráficos")
                 ) : panel === "history" ? (
-                  "Histórico de versões"
+                  t("Histórico de versões")
                 ) : (
-                  "Configurações"
+                  t("Configurações")
                 )}
               </h2>
-              <button aria-label="Fechar painel" onClick={() => setPanel(null)}>
+              <button aria-label={t("Fechar painel")} onClick={() => setPanel(null)}>
                 <X size={17} />
               </button>
             </div>
             {panel === "ai" && (
               <>
-                <p className="muted">
-                  Da pergunta ao resultado, com você no controle.
-                </p>
+                <p className="muted">{" "}{t("Da pergunta ao resultado, com você no controle.")}{" "}</p>
                 {!demo && !providers.length ? (
                   <div className="empty-state">
                     <Sparkles size={30} />
-                    <h3>Nenhum provedor configurado.</h3>
-                    <p>
-                      Configure OpenAI, um serviço compatível, Anthropic, Gemini
-                      ou Ollama no servidor. Veja o arquivo{" "}
-                      <code>docs/LLM.md</code> incluído no projeto.
-                    </p>
+                    <h3>{" "}{t("Nenhum provedor configurado.")}{" "}</h3>
+                    <p>{" "}{t("Configure OpenAI, um serviço compatível, Anthropic, Gemini ou Ollama no servidor. Veja o arquivo")}{" "}{" "}
+                      <code>docs/LLM.md</code>{" "}{t("incluído no projeto.")}{" "}</p>
                   </div>
                 ) : (
                   <>
                     {demo ? (
-                      <p className="demo-ai-note" role="note">
-                        Demonstração compartilhada: até 3 consultas a cada 30
-                        minutos, sujeitas ao limite global de 20 por hora.
-                        Use até 20 células e 300 caracteres. Revise a
-                        resposta antes de aplicar; não envie dados pessoais.
-                      </p>
-                    ) : <label>
-                      Modelo
-                      <select
+                      <p className="demo-ai-note" role="note">{" "}{t("Demonstração compartilhada: até 3 consultas a cada 30 minutos, sujeitas ao limite global de 20 por hora. Use até 20 células e 300 caracteres. Revise a resposta antes de aplicar; não envie dados pessoais.")}{" "}</p>
+                    ) : <label>{" "}{t("Modelo")}{" "}<select
                         value={provider}
                         onChange={(e) => {
                           setProvider(e.target.value);
@@ -1531,9 +1490,7 @@ function Workspace({ user, api, logout, demo = false }) {
                         ))}
                       </select>
                     </label>}
-                    <label>
-                      Intervalo enviado
-                      <input
+                    <label>{" "}{t("Intervalo enviado")}{" "}<input
                         value={selection}
                         onChange={(e) =>
                           setSelection(e.target.value.toUpperCase())
@@ -1541,7 +1498,7 @@ function Workspace({ user, api, logout, demo = false }) {
                       />
                     </label>
                     <details className="selection-preview">
-                      <summary>Revisar dados que serão enviados</summary>
+                      <summary>{" "}{t("Revisar dados que serão enviados")}{" "}</summary>
                       <pre>
                         {(() => {
                           try {
@@ -1551,34 +1508,31 @@ function Workspace({ user, api, logout, demo = false }) {
                               2,
                             );
                           } catch {
-                            return "Intervalo inválido.";
+                            return t("Intervalo inválido.");
                           }
                         })()}
                       </pre>
                     </details>
-                    <label>
-                      O que você quer fazer?
-                      <textarea
+                    <label>{" "}{t("O que você quer fazer?")}{" "}<textarea
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        placeholder="Ex.: explique estes dados ou proponha uma fórmula para calcular a variação percentual."
+                        placeholder={t("Ex.: explique estes dados ou proponha uma fórmula para calcular a variação percentual.")}
                         rows={5}
                         maxLength={demo ? 300 : undefined}
                       />
                     </label>
                     <p className="privacy-note">
-                      <Lock size={13} /> Ao enviar, {demo ? "o modelo local recebe" : "o provedor escolhido recebe"}
-                      {" "}sua instrução e somente o intervalo acima.
-                    </p>
+                      <Lock size={13} />{" "}{t("Ao enviar,")}{" "}{demo ? t("o modelo local recebe") : t("o provedor escolhido recebe")}
+                      {" "}{" "}{t("sua instrução e somente o intervalo acima.")}{" "}</p>
                     <button
                       className="primary"
                       onClick={askAI}
                       disabled={aiBusy || !prompt.trim()}
                     >
-                      {aiBusy ? "Consultando…" : "Enviar seleção ao modelo"}
+                      {aiBusy ? t("Consultando…") : t("Enviar seleção ao modelo")}
                       <ArrowRight size={16} />
                     </button>
-                    {demo && <p><a className="demo-link" href="/">Entrar na sua conta</a></p>}
+                    {demo && <p><a className="demo-link" href={"/?lang=" + language}>{" "}{t("Entrar na sua conta")}{" "}</a></p>}
                   </>
                 )}
                 {aiResult && (
@@ -1589,8 +1543,8 @@ function Workspace({ user, api, logout, demo = false }) {
                         <table>
                           <thead>
                             <tr>
-                              <th>Célula</th>
-                              <th>Proposta</th>
+                              <th>{" "}{t("Célula")}{" "}</th>
+                              <th>{" "}{t("Proposta")}{" "}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1602,61 +1556,44 @@ function Workspace({ user, api, logout, demo = false }) {
                             ))}
                           </tbody>
                         </table>
-                        <button className="primary" onClick={applyAI}>
-                          Aplicar proposta revisada
-                        </button>
-                        <button onClick={() => setAiResult(null)}>
-                          Descartar
-                        </button>
+                        <button className="primary" onClick={applyAI}>{" "}{t("Aplicar proposta revisada")}{" "}</button>
+                        <button onClick={() => setAiResult(null)}>{" "}{t("Descartar")}{" "}</button>
                       </>
                     )}
                   </div>
                 )}
-                <div className="panel-note">
-                  A IA pode cometer erros. Revise fórmulas e resultados antes de
-                  usar. Propostas nunca são aplicadas automaticamente.
-                </div>
+                <div className="panel-note">{" "}{t("A IA pode cometer erros. Revise fórmulas e resultados antes de usar. Propostas nunca são aplicadas automaticamente.")}{" "}</div>
               </>
             )}
             {panel === "charts" && (
               <>
-                <p className="muted">
-                  Transforme duas colunas em uma nova perspectiva.
-                </p>
-                <label>
-                  Intervalo do gráfico
-                  <input
+                <p className="muted">{" "}{t("Transforme duas colunas em uma nova perspectiva.")}{" "}</p>
+                <label>{" "}{t("Intervalo do gráfico")}{" "}<input
                     value={chartRange}
                     onChange={(e) =>
                       setChartRange(e.target.value.toUpperCase())
                     }
                   />
-                  <small>
-                    Primeira linha: cabeçalhos. Coluna 1: rótulos. Coluna 2:
-                    números.
-                  </small>
+                  <small>{" "}{t("Primeira linha: cabeçalhos. Coluna 1: rótulos. Coluna 2: números.")}{" "}</small>
                 </label>
-                <label>
-                  Tipo
-                  <select
+                <label>{" "}{t("Tipo")}{" "}<select
                     value={chartType}
                     onChange={(e) => setChartType(e.target.value)}
                   >
-                    <option value="bar">Colunas</option>
-                    <option value="line">Linhas</option>
-                    <option value="doughnut">Rosca</option>
+                    <option value="bar">{" "}{t("Colunas")}{" "}</option>
+                    <option value="line">{" "}{t("Linhas")}{" "}</option>
+                    <option value="doughnut">{" "}{t("Rosca")}{" "}</option>
                   </select>
                 </label>
                 <button className="primary" onClick={createChart}>
-                  <ChartColumn size={16} /> Criar gráfico
-                </button>
+                  <ChartColumn size={16} />{" "}{t("Criar gráfico")}{" "}</button>
                 {(meta.charts || []).map((c) => (
                   <div className="chart-list" key={c.id}>
                     <button onClick={() => setChartConfig(c)}>
-                      {c.range} · {c.type}
+                      {c.range} · {t({ bar: "Colunas", line: "Linhas", doughnut: "Rosca" }[c.type] || c.type)}
                     </button>
                     <button
-                      aria-label="Excluir gráfico"
+                      aria-label={t("Excluir gráfico")}
                       onClick={() => {
                         const m = {
                           ...current.current.meta,
@@ -1684,62 +1621,49 @@ function Workspace({ user, api, logout, demo = false }) {
                     }
                   />
                 )}
-                <p className="panel-note">
-                  Gráficos são preservados no formato Excellence. A exportação
-                  XLSX contém as células.
-                </p>
+                <p className="panel-note">{" "}{t("Gráficos são preservados no formato Excellence. A exportação XLSX contém as células.")}{" "}</p>
               </>
             )}
             {panel === "history" && (
               <>
-                <p className="muted">
-                  Cada versão salva é um ponto de retorno.
-                </p>
+                <p className="muted">{" "}{t("Cada versão salva é um ponto de retorno.")}{" "}</p>
                 {versions.map((v) => (
                   <div className="version" key={v.revision}>
                     <History size={16} />
                     <div>
-                      <strong>Revisão {v.revision}</strong>
+                      <strong>{" "}{t("Revisão")}{" "}{v.revision}</strong>
                       <small>
                         {v.title}
                         <br />
-                        {new Date(v.created).toLocaleString("pt-BR")}
+                        {new Date(v.created).toLocaleString(language === "pt-BR" ? "pt-BR" : "en-US")}
                       </small>
                     </div>
                     <button
                       disabled={v.revision === current.current.revision}
                       onClick={() => setDialog({ type: "restore", version: v })}
-                    >
-                      Restaurar
-                    </button>
+                    >{" "}{t("Restaurar")}{" "}</button>
                   </div>
                 ))}
                 {!versions.length && (
-                  <p>Salve o arquivo para iniciar seu histórico.</p>
+                  <p>{" "}{t("Salve o arquivo para iniciar seu histórico.")}{" "}</p>
                 )}
-                <p className="panel-note">
-                  Restaurar cria uma nova revisão. Até 20 revisões por arquivo.
-                </p>
+                <p className="panel-note">{" "}{t("Restaurar cria uma nova revisão. Até 20 revisões por arquivo.")}{" "}</p>
               </>
             )}
             {panel === "settings" && (
               <>
-                <h3>Conta</h3>
+                <h3>{" "}{t("Conta")}{" "}</h3>
                 <p>
                   {user.username} ·{" "}
-                  {user.role === "admin" ? "Administrador" : "Usuário"}
+                  {user.role === "admin" ? t("Administrador") : t("Usuário")}
                 </p>
-                <label>
-                  Senha atual
-                  <input
+                <label>{" "}{t("Senha atual")}{" "}<input
                     type="password"
                     value={oldPass}
                     onChange={(e) => setOldPass(e.target.value)}
                   />
                 </label>
-                <label>
-                  Nova senha
-                  <input
+                <label>{" "}{t("Nova senha")}{" "}<input
                     type="password"
                     value={nextPass}
                     onChange={(e) => setNextPass(e.target.value)}
@@ -1755,35 +1679,27 @@ function Workspace({ user, api, logout, demo = false }) {
                       });
                       setOldPass("");
                       setNextPass("");
-                      notice("Senha atualizada e outras sessões encerradas.");
+                      notice(t("Senha atualizada e outras sessões encerradas."));
                     } catch (e) {
                       notice(e.message);
                     }
                   }}
-                >
-                  Alterar senha
-                </button>
+                >{" "}{t("Alterar senha")}{" "}</button>
                 <label className="checkbox">
                   <input
                     type="checkbox"
                     checked={auto}
                     onChange={(e) => setAuto(e.target.checked)}
-                  />{" "}
-                  Salvamento automático
-                </label>
+                  />{" "}{" "}{t("Salvamento automático")}{" "}</label>
                 {user.role === "admin" && (
                   <>
-                    <h3>Administrar usuários</h3>
-                    <label>
-                      Novo usuário
-                      <input
+                    <h3>{" "}{t("Administrar usuários")}{" "}</h3>
+                    <label>{" "}{t("Novo usuário")}{" "}<input
                         value={newUser}
                         onChange={(e) => setNewUser(e.target.value)}
                       />
                     </label>
-                    <label>
-                      Senha inicial
-                      <input
+                    <label>{" "}{t("Senha inicial")}{" "}<input
                         type="password"
                         value={newPass}
                         onChange={(e) => setNewPass(e.target.value)}
@@ -1799,14 +1715,12 @@ function Workspace({ user, api, logout, demo = false }) {
                           setNewUser("");
                           setNewPass("");
                           setUsers((await api("/users")).users);
-                          notice("Usuário criado.");
+                          notice(t("Usuário criado."));
                         } catch (e) {
                           notice(e.message);
                         }
                       }}
-                    >
-                      Criar usuário
-                    </button>
+                    >{" "}{t("Criar usuário")}{" "}</button>
                     {users.map((u) => (
                       <div className="user-row" key={u.id}>
                         <span>
@@ -1815,7 +1729,7 @@ function Workspace({ user, api, logout, demo = false }) {
                         </span>
                         {u.role !== "admin" && (
                           <button
-                            aria-label={"Remover usuário " + u.username}
+                            aria-label={t("Remover usuário ") + u.username}
                             onClick={() =>
                               setDialog({ type: "deleteUser", user: u })
                             }
@@ -1826,12 +1740,12 @@ function Workspace({ user, api, logout, demo = false }) {
                       </div>
                     ))}
                     <details>
-                      <summary>Atividades recentes</summary>
+                      <summary>{" "}{t("Atividades recentes")}{" "}</summary>
                       {audit.map((a) => (
                         <p className="audit-row" key={a.id}>
-                          {a.action} · {a.username || "Conta removida"}
+                          {a.action} · {a.username || t("Conta removida")}
                           <small>
-                            {new Date(a.created).toLocaleString("pt-BR")}
+                            {new Date(a.created).toLocaleString(language === "pt-BR" ? "pt-BR" : "en-US")}
                           </small>
                         </p>
                       ))}
@@ -1847,9 +1761,7 @@ function Workspace({ user, api, logout, demo = false }) {
                       logout();
                     }
                   }}
-                >
-                  Salvar e sair
-                </IconButton>
+                >{" "}{t("Salvar e sair")}{" "}</IconButton>
               </>
             )}
           </aside>
@@ -1861,10 +1773,10 @@ function Workspace({ user, api, logout, demo = false }) {
         </span>
         <span>
           {address} <span className="muted">·</span>{" "}
-          {demo ? "Sessão temporária" : "Ctrl+S para salvar"}
+          {demo ? t("Sessão temporária") : t("Ctrl+S para salvar")}
         </span>
         <span>
-          <ShieldCheck size={12} /> Sem telemetria própria{" "}
+          <ShieldCheck size={12} />{" "}{t("Sem telemetria própria")}{" "}{" "}
           <span className="muted">·</span> 0.1.0-rc.1
         </span>
       </footer>
@@ -1872,7 +1784,7 @@ function Workspace({ user, api, logout, demo = false }) {
         <div className="toast" role="status">
           <AlertTriangle size={18} />
           <span>{message}</span>
-          <button aria-label="Dispensar aviso" onClick={() => setMessage("")}>
+          <button aria-label={t("Dispensar aviso")} onClick={() => setMessage("")}>
             <X size={16} />
           </button>
         </div>
@@ -1881,15 +1793,15 @@ function Workspace({ user, api, logout, demo = false }) {
         <Dialog
           title={
             {
-              new: "Comece algo excelente",
-              themes: "Seu jeito de trabalhar",
-              pivot: "Criar resumo por grupo",
-              import: "Importar arquivo",
-              delete: "Excluir arquivo",
-              restore: "Restaurar versão",
-              recovery: "Trabalho recuperado",
-              deleteUser: "Remover usuário",
-              help: "Conheça o Excellence",
+              new: t("Comece algo excelente"),
+              themes: t("Seu jeito de trabalhar"),
+              pivot: t("Criar resumo por grupo"),
+              import: t("Importar arquivo"),
+              delete: t("Excluir arquivo"),
+              restore: t("Restaurar versão"),
+              recovery: t("Trabalho recuperado"),
+              deleteUser: t("Remover usuário"),
+              help: t("Conheça o Excellence"),
             }[dialog.type]
           }
           wide={dialog.type === "new" || dialog.type === "help"}
@@ -1897,17 +1809,15 @@ function Workspace({ user, api, logout, demo = false }) {
         >
           {dialog.type === "new" && (
             <>
-              <p className="muted">
-                Uma tela em branco ou um ponto de partida.
-              </p>
+              <p className="muted">{" "}{t("Uma tela em branco ou um ponto de partida.")}{" "}</p>
               <div className="templates">
-                {Object.entries(templates).map(([k, t]) => (
+                {Object.entries(templates).map(([k, template]) => (
                   <button key={k} onClick={() => newFile(k)}>
                     <div className={"template-preview " + k}>
                       <Table2 size={32} />
                     </div>
-                    <strong>{t.label}</strong>
-                    <small>{t.description}</small>
+                    <strong>{t(template.label)}</strong>
+                    <small>{t(template.description)}</small>
                   </button>
                 ))}
               </div>
@@ -1915,7 +1825,7 @@ function Workspace({ user, api, logout, demo = false }) {
           )}
           {dialog.type === "themes" && (
             <>
-              <p className="muted">Um ambiente que acompanha seu foco.</p>
+              <p className="muted">{" "}{t("Um ambiente que acompanha seu foco.")}{" "}</p>
               <div className="theme-grid">
                 {themes.map(([id, label, color]) => (
                   <button
@@ -1932,7 +1842,7 @@ function Workspace({ user, api, logout, demo = false }) {
                       <i />
                     </span>
                     <span>
-                      {label}
+                      {t(label)}
                       {theme === id && <Check size={15} />}
                     </span>
                   </button>
@@ -1943,24 +1853,14 @@ function Workspace({ user, api, logout, demo = false }) {
                   type="checkbox"
                   checked={gridDark}
                   onChange={(e) => setGridDark(e.target.checked)}
-                />{" "}
-                Adaptar células para tela escura
-              </label>
-              <p className="muted small">
-                A opção escura transforma as cores somente na tela. Valores e
-                cores dos arquivos exportados são preservados.
-              </p>
+                />{" "}{" "}{t("Adaptar células para tela escura")}{" "}</label>
+              <p className="muted small">{" "}{t("A opção escura transforma as cores somente na tela. Valores e cores dos arquivos exportados são preservados.")}{" "}</p>
             </>
           )}
           {dialog.type === "pivot" && (
             <>
-              <p className="muted">
-                A primeira linha da aba atual deve conter cabeçalhos. O resumo é
-                uma cópia agregada dos dados, sem atualização automática.
-              </p>
-              <label>
-                Coluna de agrupamento
-                <select
+              <p className="muted">{" "}{t("A primeira linha da aba atual deve conter cabeçalhos. O resumo é uma cópia agregada dos dados, sem atualização automática.")}{" "}</p>
+              <label>{" "}{t("Coluna de agrupamento")}{" "}<select
                   value={pivotKey}
                   onChange={(e) => setPivotKey(e.target.value)}
                 >
@@ -1971,9 +1871,7 @@ function Workspace({ user, api, logout, demo = false }) {
                   ))}
                 </select>
               </label>
-              <label>
-                Coluna de valores
-                <select
+              <label>{" "}{t("Coluna de valores")}{" "}<select
                   value={pivotValue}
                   onChange={(e) => setPivotValue(e.target.value)}
                 >
@@ -1984,22 +1882,18 @@ function Workspace({ user, api, logout, demo = false }) {
                   ))}
                 </select>
               </label>
-              <label>
-                Operação
-                <select
+              <label>{" "}{t("Operação")}{" "}<select
                   value={pivotOp}
                   onChange={(e) => setPivotOp(e.target.value)}
                 >
-                  <option value="sum">Soma</option>
-                  <option value="count">Contagem</option>
-                  <option value="average">Média</option>
-                  <option value="min">Mínimo</option>
-                  <option value="max">Máximo</option>
+                  <option value="sum">{" "}{t("Soma")}{" "}</option>
+                  <option value="count">{" "}{t("Contagem")}{" "}</option>
+                  <option value="average">{" "}{t("Média")}{" "}</option>
+                  <option value="min">{" "}{t("Mínimo")}{" "}</option>
+                  <option value="max">{" "}{t("Máximo")}{" "}</option>
                 </select>
               </label>
-              <button className="primary" onClick={createPivot}>
-                Criar resumo em nova aba
-              </button>
+              <button className="primary" onClick={createPivot}>{" "}{t("Criar resumo em nova aba")}{" "}</button>
             </>
           )}
           {dialog.type === "import" && (
@@ -2009,28 +1903,15 @@ function Workspace({ user, api, logout, demo = false }) {
               </p>
               <div className="callout">
                 <AlertTriangle size={19} />
-                <p>
-                  XLSX é convertido para o formato do Excellence. Macros,
-                  gráficos, pivôs, conexões externas, validações e formatação
-                  condicional do original podem ser perdidos. Mantenha uma cópia
-                  do arquivo original. A importação não executa macros.
-                </p>
+                <p>{" "}{t("XLSX é convertido para o formato do Excellence. Macros, gráficos, pivôs, conexões externas, validações e formatação condicional do original podem ser perdidos. Mantenha uma cópia do arquivo original. A importação não executa macros.")}{" "}</p>
               </div>
-              <p>
-                Para preservar os recursos do Excellence, use o formato nativo
-                JSON.
-              </p>
-              <button className="primary" onClick={() => doImport(dialog.file)}>
-                Importar como nova planilha
-              </button>
+              <p>{" "}{t("Para preservar os recursos do Excellence, use o formato nativo JSON.")}{" "}</p>
+              <button className="primary" onClick={() => doImport(dialog.file)}>{" "}{t("Importar como nova planilha")}{" "}</button>
             </>
           )}
           {dialog.type === "delete" && (
             <>
-              <p>
-                Excluir <strong>{dialog.file.title}</strong> e seu histórico
-                desta instalação? Exporte uma cópia se precisar manter os dados.
-              </p>
+              <p>{" "}{t("Excluir")}{" "}<strong>{dialog.file.title}</strong>{" "}{t("e seu histórico desta instalação? Exporte uma cópia se precisar manter os dados.")}{" "}</p>
               <button
                 className="danger"
                 onClick={async () => {
@@ -2041,7 +1922,7 @@ function Workspace({ user, api, logout, demo = false }) {
                       localStorage.removeItem(recoveryKey);
                       load({
                         id: null,
-                        title: "Sem título",
+                        title: t("Sem título"),
                         revision: 0,
                         sheets: blankWorkbook(),
                         meta: { charts: [] },
@@ -2052,17 +1933,12 @@ function Workspace({ user, api, logout, demo = false }) {
                     notice(e.message);
                   }
                 }}
-              >
-                Excluir arquivo e histórico
-              </button>
+              >{" "}{t("Excluir arquivo e histórico")}{" "}</button>
             </>
           )}
           {dialog.type === "restore" && (
             <>
-              <p>
-                Restaurar a revisão {dialog.version.revision}? As alterações
-                atuais serão salvas antes da restauração.
-              </p>
+              <p>{" "}{t("Restaurar a revisão")}{" "}{dialog.version.revision}{" "}{t("? As alterações atuais serão salvas antes da restauração.")}{" "}</p>
               <button
                 className="primary"
                 onClick={async () => {
@@ -2086,7 +1962,7 @@ function Workspace({ user, api, logout, demo = false }) {
                       current.current.revision = d.revision;
                       stash();
                       notice(
-                        "Novas alterações foram preservadas localmente. Exporte ou salve uma cópia.",
+                        t("Novas alterações foram preservadas localmente. Exporte ou salve uma cópia."),
                       );
                       return;
                     }
@@ -2095,22 +1971,17 @@ function Workspace({ user, api, logout, demo = false }) {
                     setVersions(
                       (await api("/workbooks/" + d.id + "/versions")).versions,
                     );
-                    notice("Versão restaurada.");
+                    notice(t("Versão restaurada."));
                   } catch (e) {
                     notice(e.message);
                   }
                 }}
-              >
-                Restaurar revisão
-              </button>
+              >{" "}{t("Restaurar revisão")}{" "}</button>
             </>
           )}
           {dialog.type === "recovery" && (
             <>
-              <p>
-                Há uma cópia local de <strong>{dialog.data.title}</strong> com
-                alterações que podem não ter sido salvas no servidor.
-              </p>
+              <p>{" "}{t("Há uma cópia local de")}{" "}<strong>{dialog.data.title}</strong>{" "}{t("com alterações que podem não ter sido salvas no servidor.")}{" "}</p>
               <button
                 className="primary"
                 onClick={() => {
@@ -2118,30 +1989,23 @@ function Workspace({ user, api, logout, demo = false }) {
                     ...dialog.data,
                     id: null,
                     revision: 0,
-                    title: dialog.data.title + " (recuperado)",
+                    title: dialog.data.title + t(" (recuperado)"),
                   });
                   dirty();
                   setDialog(null);
                 }}
-              >
-                Recuperar como novo arquivo
-              </button>
+              >{" "}{t("Recuperar como novo arquivo")}{" "}</button>
               <button
                 onClick={() => {
                   localStorage.removeItem(recoveryKey);
                   setDialog(null);
                 }}
-              >
-                Descartar cópia local
-              </button>
+              >{" "}{t("Descartar cópia local")}{" "}</button>
             </>
           )}
           {dialog.type === "deleteUser" && (
             <>
-              <p>
-                Remover {dialog.user.username} e todos os arquivos dessa conta?
-                Esta ação não pode ser desfeita.
-              </p>
+              <p>{" "}{t("Remover")}{" "}{dialog.user.username}{" "}{t("e todos os arquivos dessa conta? Esta ação não pode ser desfeita.")}{" "}</p>
               <button
                 className="danger"
                 onClick={async () => {
@@ -2153,58 +2017,26 @@ function Workspace({ user, api, logout, demo = false }) {
                     notice(e.message);
                   }
                 }}
-              >
-                Remover conta e arquivos
-              </button>
+              >{" "}{t("Remover conta e arquivos")}{" "}</button>
             </>
           )}
           {dialog.type === "help" && (
             <div className="help-content">
-              <p>
-                Planilhas livres com edição, fórmulas e arquivos na sua
-                infraestrutura.
+              <p>{" "}{t("Planilhas livres com edição, fórmulas e arquivos na sua infraestrutura.")}{" "}</p>
+              <h3>{" "}{t("Trabalhar com células")}{" "}</h3>
+              <p>{" "}{t("Clique ou navegue com as setas. Use a barra de fórmulas acima para editar com teclado. Fórmulas usam nomes em inglês, como")}{" "}{" "}
+                <code>=SUM(A1:A10)</code>, <code>{" "}{t("=IF(B1>0,\"Sim\",\"Não\")")}{" "}</code>{" "}{" "}{t("e")}{" "}<code>=VLOOKUP(A1,B1:D10,2,FALSE)</code>.
               </p>
-              <h3>Trabalhar com células</h3>
+              <p>{" "}{t("Use os menus da grade para formatação, filtros, ordenação, validação, comentários e congelamento. Copiar/colar e desfazer/refazer seguem os atalhos usuais. A referência avançada de fórmulas pode permanecer em inglês.")}{" "}</p>
+              <h3>{" "}{t("Arquivos e dados")}{" "}</h3>
               <p>
-                Clique ou navegue com as setas. Use a barra de fórmulas acima
-                para editar com teclado. Fórmulas usam nomes em inglês, como{" "}
-                <code>=SUM(A1:A10)</code>, <code>=IF(B1&gt;0,"Sim","Não")</code>{" "}
-                e <code>=VLOOKUP(A1,B1:D10,2,FALSE)</code>.
-              </p>
-              <p>
-                Use os menus da grade para formatação, filtros, ordenação,
-                validação, comentários e congelamento. Copiar/colar e
-                desfazer/refazer seguem os atalhos usuais. Parte dos menus da
-                grade está em inglês.
-              </p>
-              <h3>Arquivos e dados</h3>
-              <p>
-                {demo ? "Nesta demonstração, as edições duram somente nesta sessão. " : "Ctrl+S salva. "}
-                O formato Excellence mantém os recursos nativos;
-                XLSX e CSV são conversões com limites. Até 10.000 linhas, 256
-                colunas e 100.000 células preenchidas por arquivo. Revisões
-                concorrentes geram conflito; salve uma cópia para preservar o
-                trabalho.
-              </p>
-              <h3>Imprimir e PDF</h3>
-              <p>
-                Exporte XLSX e use um aplicativo compatível para definir páginas
-                e imprimir em PDF. A grade ainda não fornece paginação de
-                impressão.
-              </p>
-              <h3>Compatibilidade</h3>
-              <p>
-                Esta versão não implementa VBA, Power Query, Power Pivot, ODS ou
-                toda a compatibilidade do Excel. Resumos são estáticos. Consulte
-                docs/COMPATIBILITY.md e o relatório de validação antes de usar
-                em produção.
-              </p>
-              <h3>Licença MIT</h3>
-              <p>
-                Uso pessoal e comercial permitidos, com os avisos de licença. O
-                código e as dependências acompanham a distribuição com suas
-                licenças.
-              </p>
+                {demo ? t("Nesta demonstração, as edições duram somente nesta sessão. ") : t("Ctrl+S salva. ")}{" "}{t("O formato Excellence mantém os recursos nativos; XLSX e CSV são conversões com limites. Até 10.000 linhas, 256 colunas e 100.000 células preenchidas por arquivo. Revisões concorrentes geram conflito; salve uma cópia para preservar o trabalho.")}{" "}</p>
+              <h3>{" "}{t("Imprimir e PDF")}{" "}</h3>
+              <p>{" "}{t("Exporte XLSX e use um aplicativo compatível para definir páginas e imprimir em PDF. A grade ainda não fornece paginação de impressão.")}{" "}</p>
+              <h3>{" "}{t("Compatibilidade")}{" "}</h3>
+              <p>{" "}{t("Esta versão não implementa VBA, Power Query, Power Pivot, ODS ou toda a compatibilidade do Excel. Resumos são estáticos. Consulte docs/COMPATIBILITY.md e o relatório de validação antes de usar em produção.")}{" "}</p>
+              <h3>{" "}{t("Licença MIT")}{" "}</h3>
+              <p>{" "}{t("Uso pessoal e comercial permitidos, com os avisos de licença. O código e as dependências acompanham a distribuição com suas licenças.")}{" "}</p>
             </div>
           )}
         </Dialog>
@@ -2213,19 +2045,18 @@ function Workspace({ user, api, logout, demo = false }) {
   );
 }
 class ErrorBoundary extends React.Component {
+  static contextType = LocaleContext;
   state = { error: null };
   static getDerivedStateFromError(error) {
     return { error };
   }
   render() {
+    const { t } = this.context;
     return this.state.error ? (
       <div className="loading">
-        <h2>O editor encontrou um problema.</h2>
-        <p>
-          Recarregue para restaurar a última versão salva. Alterações locais
-          podem estar disponíveis na recuperação.
-        </p>
-        <button onClick={() => location.reload()}>Reabrir Excellence</button>
+        <h2>{" "}{t("O editor encontrou um problema.")}{" "}</h2>
+        <p>{" "}{t("Recarregue para restaurar a última versão salva. Alterações locais podem estar disponíveis na recuperação.")}{" "}</p>
+        <button onClick={() => location.reload()}>{" "}{t("Reabrir Excellence")}{" "}</button>
       </div>
     ) : (
       this.props.children
@@ -2233,7 +2064,9 @@ class ErrorBoundary extends React.Component {
   }
 }
 createRoot(document.getElementById("root")).render(
+  <LocaleProvider>
   <ErrorBoundary>
     <App />
-  </ErrorBoundary>,
+  </ErrorBoundary>
+  </LocaleProvider>,
 );

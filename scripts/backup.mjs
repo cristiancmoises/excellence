@@ -6,7 +6,7 @@ const source = resolve(
   "excellence.sqlite",
 );
 if (!existsSync(source)) {
-  console.error("Banco não encontrado. Informe EXCELLENCE_DATA_DIR.");
+  console.error("Database not found. Set EXCELLENCE_DATA_DIR.");
   process.exit(1);
 }
 const directory = resolve(process.env.EXCELLENCE_BACKUP_DIR || "backups");
@@ -26,5 +26,5 @@ verify.exec("PRAGMA journal_mode=DELETE");
 const check = verify.prepare("PRAGMA integrity_check").get();
 verify.close();
 if (Object.values(check)[0] !== "ok")
-  throw Error("Backup falhou na integridade.");
+  throw Error("Backup integrity check failed.");
 console.log(path);

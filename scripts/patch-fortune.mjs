@@ -41,17 +41,38 @@ export function patchSource(source) {
   }
   const clipboard = 'export let excellenceLocalClipboard = "";';
   if (!out.includes(clipboard)) out += "\n" + clipboard + "\n";
+  const localeStart = "function locale(ctx) {";
+  const localeBranch = 'if (ctx.lang === "pt-BR" && excellencePortugueseLocale) return excellencePortugueseLocale;';
+  if (!out.includes(localeStart))
+    throw Error("FortuneSheet mudou. Revise o registro de idioma antes de compilar.");
+  if (!out.includes(localeBranch))
+    out = out.replace(localeStart, localeStart + "\n  " + localeBranch);
+  const localeExport = "export function excellenceSetPortugueseLocale(value) { excellencePortugueseLocale = value; }";
+  if (!out.includes(localeExport))
+    out += "\nlet excellencePortugueseLocale;\n" + localeExport + "\n";
   return out;
 }
 export function patchReactSource(source) {
   const before = 'sessionStorage.getItem("localClipboard")';
   const imported = 'import { excellenceLocalClipboard } from "@fortune-sheet/core";';
-  if (source.includes(imported) && !source.includes(before)) return source;
-  if (!source.includes(before))
-    throw Error("FortuneSheet mudou. Revise o fallback de clipboard antes de compilar.");
-  return imported + "\n" + source
-    .replaceAll(before, "excellenceLocalClipboard")
-    .replace("Attempting to use sessionStorage fallback.", "Attempting to use in-memory fallback.");
+  let out = source;
+  if (!out.includes(imported) || out.includes(before)) {
+    if (!out.includes(before))
+      throw Error("FortuneSheet mudou. Revise o fallback de clipboard antes de compilar.");
+    out = imported + "\n" + out.replaceAll(before, "excellenceLocalClipboard")
+      .replace("Attempting to use sessionStorage fallback.", "Attempting to use in-memory fallback.");
+  }
+  // The pinned build hardcodes Chinese text for these accessible toolbar labels.
+  for (const [original, localized] of [
+    ['text: "\\u5408\\u5E76\\u5355\\u5143\\u683C",', 'text: toolbar["merge-cell"],'],
+    ['text: "\\u8FB9\\u6846\\u8BBE\\u7F6E",', 'text: toolbar.border,'],
+    ['d: getPath(currency),', 'd: getPath(currency === "R$" ? "$" : currency),'],
+  ]) {
+    if (out.includes(localized)) continue;
+    if (!out.includes(original)) throw Error("FortuneSheet toolbar changed. Review the locale patch before building.");
+    out = out.replace(original, localized);
+  }
+  return out;
 }
 if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
   const path = "node_modules/@fortune-sheet/core/dist/index.esm.js";

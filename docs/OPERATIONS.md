@@ -1,71 +1,79 @@
-# Operação
+# Excellence operations
 
-## Primeiro acesso
+[Português brasileiro](OPERATIONS.pt-BR.md)
 
-Use `docker compose logs excellence` para ver o token inicial, ou o terminal do aplicativo local. O token só cria a primeira conta. Depois do setup, o endpoint retorna conflito para novas tentativas. Não envie o log contendo o token enquanto a instalação estiver sem administrador.
+The hosted service is [exc.securityops.co](https://exc.securityops.co). [exc.securityops.com.br](https://exc.securityops.com.br) redirects to the primary origin. For another deployment, copy `.env.example` to `.env` and set the exact HTTPS `EXCELLENCE_PUBLIC_URL` and `EXCELLENCE_SECURE_COOKIE=true`. The proxy must preserve the public Host header. The application does not use `X-Forwarded-*` to decide who may sign in.
 
-Contas usam scrypt com salt individual, sessões de até 12 horas, cookies HttpOnly/SameSite=Strict e tokens CSRF. Admin cria contas em Configurações; usuários só acessam seus próprios arquivos. Administrador pode excluir contas e arquivos, mas não recebe uma interface para ler arquivos de outros usuários. Não há MFA, recuperação de senha por email ou SSO nesta versão.
+Run `docker compose up -d --build`. The host port defaults to loopback on 3210. Put an HTTPS proxy in front before entering passwords from another machine. The first one-time setup token is in the private service log (`docker compose logs excellence`); use it to create the administrator, then restrict access to that log. There is no default password or public registration.
 
-## Expor na web com HTTPS
+## Storage and backup
 
-Por padrão a porta publicada é 127.0.0.1:3210. Use um proxy reverso, por exemplo Nginx Proxy Manager, e um domínio sob seu controle. Crie `.env` copiando `.env.example` e defina:
+The `excellence-data` volume stores the SQLite WAL database, accounts, spreadsheets, revisions, and activity. Keep it when recreating containers; `docker compose down -v` deletes it. The service runs as a non-root user with a read-only image filesystem.
 
-```dotenv
-EXCELLENCE_PUBLIC_URL=https://excellence.example.org
-EXCELLENCE_SECURE_COOKIE=true
-```
+The online backup helper creates a consistent database copy and runs SQLite integrity checks. From the container, set `EXCELLENCE_BACKUP_DIR` to a protected writable directory and run `node scripts/backup.mjs`. Copy the resulting file off the volume to independent protected storage. Backups contain files and password hashes and are not encrypted by the application. No automatic backup schedule or retention is provided.
 
-Recrie o serviço:
+To restore, stop the service, preserve the current data directory, verify the backup with SQLite, replace `excellence.sqlite` while the service is stopped, and remove only the stale `excellence.sqlite-wal` and `excellence.sqlite-shm` files from that restored destination. Start the service and check login, a spreadsheet, its formulas, and revision history. Keep the old data copy until the drill succeeds. The [Portuguese operations guide](OPERATIONS.pt-BR.md) has the detailed Docker commands and ownership notes.
 
-```sh
-docker compose up -d --build
-```
-
-O proxy deve encaminhar o Host público original. O protocolo e a origem pública são definidos em EXCELLENCE_PUBLIC_URL; o aplicativo não confia em X-Forwarded-* para decisões de acesso. Não acrescente barra final ou caminho ao URL. Se proxy e Excellence estão em redes Docker diferentes, conecte-os à mesma rede com a configuração do seu ambiente e use excellence:3210 como upstream. O Compose entregue não altera redes de outros projetos.
-
-Para acesso direto por outro computador, ajuste EXCELLENCE_BIND=0.0.0.0 e EXCELLENCE_ALLOWED_HOSTS com os hostnames/IPs usados; configure HTTPS antes de enviar senhas por rede não confiável. Cookies Secure exigem HTTPS no navegador.
-
-## Dados
-
-Servidor direto: `EXCELLENCE_DATA_DIR` ou diretório `data` do projeto.
-Aplicativo GNU/Linux: `$XDG_DATA_HOME/excellence/data` ou `~/.local/share/excellence/data`.
-Aplicativo Windows: `%LOCALAPPDATA%\Excellence\data`.
-Docker: volume `excellence-data`, montado em `/data`.
-
-O banco SQLite usa WAL. Não copie apenas o arquivo `.sqlite` enquanto estiver em escrita. Dados e backups não são criptografados pelo aplicativo; use os controles do sistema operacional para discos e cópias.
-
-A recuperação local guarda um rascunho por conta no armazenamento do navegador; o acesso depende do perfil e origem do navegador. Ela pode falhar por espaço ou política do navegador. O servidor continua sendo o destino de salvamento, e fechar com alterações pendentes deve gerar aviso.
-
-## Backup consistente
-
-O helper usa a API SQLite online backup e executa `PRAGMA integrity_check` no resultado. Para servidor direto, com EXCELLENCE_DATA_DIR apontando para o diretório correto:
-
-```sh
-node scripts/backup.mjs
-```
-
-No Docker, crie a pasta de backups com permissão de escrita para o usuário UID 1000 do contêiner. Defina a variável de destino no comando:
+The container runs as UID 1000. Make the backup destination writable by that
+user, then create the online snapshot:
 
 ```sh
 docker compose exec -e EXCELLENCE_BACKUP_DIR=/backups excellence node scripts/backup.mjs
 ```
 
-A saída é o caminho do arquivo criado. A pasta `backups` está ligada ao host. Para não depender de permissões desse bind mount, grave em `/data/backups` e copie o arquivo retornado com `docker compose cp`. Copie backups para outro dispositivo e ensaie a restauração. Backups incluem contas, hashes de senha, arquivos, histórico e atividades; proteja o acesso. Não há agendamento ou retenção automática de backups.
+Alternatively write to `/data/backups` and use `docker compose cp` to copy the
+reported file to protected host storage. Do not copy only a live `.sqlite` file
+while WAL writes are in progress. A direct server uses `EXCELLENCE_DATA_DIR` or
+the project's `data` directory. The Linux launcher uses
+`$XDG_DATA_HOME/excellence/data` (default `~/.local/share/excellence/data`);
+Windows uses `%LOCALAPPDATA%\Excellence\data`.
 
-## Restaurar backup
+Private workspaces keep a recovery draft per account in browser storage. This
+can fail because of space or browser policy; server saving remains authoritative.
+Pending edits still trigger an exit warning when recovery storage is unavailable.
+The anonymous demo uses memory instead of this account recovery mechanism.
 
-1. Pare o servidor e preserve uma cópia do diretório atual.
-2. Verifique a integridade do backup com SQLite antes de substituir.
-3. Substitua `excellence.sqlite` no diretório de dados pelo backup. Somente com o processo parado, remova os antigos `excellence.sqlite-wal` e `excellence.sqlite-shm` para que não sejam reaplicados ao arquivo restaurado.
-4. Preserve as permissões do usuário do serviço e reinicie.
-5. Entre, abra arquivos e confirme valores, fórmulas e revisões. Troque a senha se precisar revogar sessões de um backup antigo.
+## Local model and demonstration
 
-## Atualizar
+The hosted Excellence service runs in its own Proxmox CT155. Its optional Ollama
+service is on the private Compose network; port 11434 is not published. Use:
 
-Faça backup. Extraia a nova versão em outro diretório e use o mesmo volume/diretório de dados; rode o instalador local ou `docker compose up -d --build`. Não execute duas versões sobre o mesmo banco para migrar. A versão atual usa esquema 1 e não implementa migração de versões futuras.
+```sh
+docker compose -f compose.yaml -f deploy/compose.ollama.yaml up -d ollama
+docker compose -f compose.yaml -f deploy/compose.ollama.yaml exec ollama ollama pull qwen3.5:2b-q4_K_M
+docker compose -f compose.yaml -f deploy/compose.ollama.yaml up -d --build excellence
+```
 
-## Verificações operacionais
+Set `EXCELLENCE_DEMO_AI=true` in private runtime configuration only after the
+model is installed. The `/demo` spreadsheet is anonymous and in-memory, with no
+uploads, account data or server workbook writes. Model requests use a separate
+restricted endpoint. Budgets and the single-inference lease persist in SQLite.
+The source-address budget uses the socket address, not untrusted forwarded
+headers; behind a proxy, visitors share that proxy's quota. See [limits](LLM.md).
+Keep one application instance; a public inference endpoint is not a general chat
+service and rate limits do not replace network-level denial-of-service controls.
+The hosted HTTPS edge additionally allows a burst of two above one request per
+minute per client address for the demo model route, rejects bodies above 2 KiB,
+and restricts that route to POST. These proxy settings are separate from the
+persistent application quota.
 
-`GET /health` retorna app=excellence e status=ok. Monitore espaço em disco, backups, reinícios, latência e erros do proxy. O log de atividades na interface registra ações, não o conteúdo de células nem as chaves dos provedores. O Compose usa usuário sem privilégios, filesystem da imagem somente leitura, volume separado, capabilities removidas e healthcheck.
+The selected model's observed Ollama digest is recorded in
+[`deploy/model.json`](../deploy/model.json). Before enabling inference or after
+pulling a model again, compare that digest with `/api/tags` on the private
+Ollama service. A matching tag name alone is not an immutable pin. Do not replace
+the expected digest silently; qualify an intended update and record it.
 
-O build Docker e o script Windows requerem execução nos ambientes de destino antes de uma liberação de produção. Um CI preparado não é prova de que esses ambientes foram testados.
+## Service checks
+
+Monitor `GET /health`, disk space, restarts, backup age, and proxy errors. This version has no MFA, email password recovery, or SSO. Administrators can manage accounts but do not have a user interface for reading another user's files. External assistant providers are optional; keep provider keys in private runtime configuration. A green build or health check does not prove full spreadsheet compatibility; check [known limits](COMPATIBILITY.md) with representative files.
+
+Accounts use individually salted scrypt hashes, sessions up to 12 hours,
+HttpOnly/SameSite=Strict cookies and CSRF tokens. After an update, reuse the data
+volume and run one instance against it. Schema version 1 does not provide a
+migration from hypothetical future schemas; preserve the previous image and
+backup. Do not operate two versions against the same live database.
+
+English is the default interface and documentation language. The language
+selector changes to Brazilian Portuguese without reloading or discarding edits.
+The API uses the explicit `Accept-Language` choice for errors and assistant
+explanations; workbook titles, cells and formula names are not translated.

@@ -110,6 +110,16 @@ async function localProvider(t, reply, status = 200) {
 }
 const smallInput = { prompt: "Some A1:A3 em B1", selection: "A1:B3", cells: [{ cell: "A1", value: 5 }] };
 
+test('assistant instructions use English by default and Portuguese only when selected', async (t) => {
+  const local = await localProvider(t, { message: { content: JSON.stringify(answer) }, done: true });
+  await assist(local.provider, smallInput);
+  assert.match(local.received().messages[0].content, /one short sentence in English/);
+  assert.doesNotMatch(local.received().messages[0].content, /one short sentence in Brazilian Portuguese/);
+  await assist(local.provider, smallInput, { language: 'pt-BR' });
+  assert.match(local.received().messages[0].content, /one short sentence in Brazilian Portuguese/);
+  assert.deepEqual(JSON.parse(local.received().messages[1].content).cells, smallInput.cells);
+});
+
 test("Ollama local usa Qwen leve sem raciocínio e envia somente a seleção", async (t) => {
   const local = await localProvider(t, { message: { content: JSON.stringify(answer), thinking: "private reasoning" }, done: true });
   const result = await assist(local.provider, { ...smallInput, workbook: "private", cells: [{ ...smallInput.cells[0], extra: "private" }] });
@@ -171,7 +181,7 @@ test("modelo local padrão e rótulo refletem configuração", () => {
   const [provider] = loadProviders({ OLLAMA_BASE_URL: "http://ollama:11434" });
   assert.equal(provider.model, "qwen3.5:2b-q4_K_M");
   assert.equal(provider.label, "Qwen3.5 2B · local");
-  assert.equal(loadProviders({ OLLAMA_BASE_URL: "http://ollama:11434", OLLAMA_MODEL: "custom" })[0].label, "Ollama local");
+  assert.equal(loadProviders({ OLLAMA_BASE_URL: "http://ollama:11434", OLLAMA_MODEL: "custom" })[0].label, "Local Ollama");
 });
 
 test("threads Ollama são limitadas a 1–4 e configuráveis pelo operador", async (t) => {

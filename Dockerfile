@@ -10,7 +10,7 @@ WORKDIR /app
 RUN mkdir /data && chown node:node /data
 COPY --from=build --chown=node:node /build/dist ./dist
 COPY --chown=node:node server ./server
-COPY --chown=node:node src/shared.mjs ./src/shared.mjs
+COPY --chown=node:node src/shared.mjs src/error-messages.mjs ./src/
 COPY --chown=node:node scripts/backup.mjs ./scripts/backup.mjs
 COPY --chown=node:node LICENSE THIRD_PARTY_NOTICES.txt ./
 USER node

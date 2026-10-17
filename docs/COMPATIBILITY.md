@@ -1,43 +1,58 @@
-# Compatibilidade — 0.1.0-rc.1
+# Compatibility — 0.1.0-rc.1
 
-Esta versão é uma suíte de planilhas funcional com escopo delimitado. Não existe certificação de equivalência com Microsoft Excel, nem cobertura completa dos formatos Office.
+[Português brasileiro](COMPATIBILITY.pt-BR.md)
 
-| Recurso | Editor / formato nativo | XLSX |
-|---|---|---|
-| Valores numéricos, texto, booleanos | Sim | Importa / exporta |
-| Texto rico e múltiplas linhas | Sim | Conteúdo e estilos básicos preservados |
-| Fórmulas do motor FortuneSheet | Sim, com nomes em inglês | Fórmula e resultado em cache; Excel pode recalcular |
-| Abas, nomes e referências entre abas | Sim | Nomes e fórmulas preservados |
-| Formato numérico, fonte, cor e preenchimento | Sim | Conversão básica |
-| Alinhamento, quebra de texto e dimensões | Sim | Conversão básica |
-| Células mescladas | Sim | Importa / exporta |
-| Bordas | Sim | Conversão não implementada |
-| Comentários | Sim | Notas simples suportadas; não são comentários encadeados |
-| Filtros, validações e formatação condicional | Recursos do motor | Regras não preservadas na conversão |
-| Gráficos Excellence | Colunas, linhas e rosca, até 20 | Não exportados para XLSX |
-| Resumos por grupo | Nova aba agregada e estática | Valores da aba exportados |
-| Tabelas dinâmicas Excel | Não | Não preservadas |
-| VBA, macros, ActiveX, suplementos | Não | Não executados nem preservados |
-| Power Query, Power Pivot, DAX, conexões externas | Não | Não preservados |
-| Arquivos XLS antigos, XLSB, XLSM, ODS, criptografados | Não | Somente XLSX não criptografado |
-| Gráficos / imagens importados | Não | Não preservados |
-| Coedição em tempo real / compartilhamento | Não | Contas isoladas; conflitos entre sessões tratados |
-| Impressão paginada / PDF nativo | Não | Exporte e use aplicativo compatível para paginação |
-| Todas as funções e matrizes dinâmicas Excel | Não garantido | Funções fora da cobertura podem resultar em erros |
-| Menus totalmente em português | Shell em PT-BR; grade parcialmente em inglês | Não aplicável |
+Excellence provides spreadsheet editing with a defined scope. This release
+does not certify full equivalence with Microsoft Excel or complete Office
+format coverage. Keep original files when importing important documents.
 
-## Limites explícitos
+| Feature | Editor / native format | XLSX |
+| --- | --- | --- |
+| Numbers, text and booleans | Supported | Import/export |
+| Rich text and multiple lines | Supported | Content and basic styles preserved |
+| FortuneSheet formulas | English function names | Formula and cached result; Excel may recalculate |
+| Sheets, names and cross-sheet references | Supported | Names and formulas preserved |
+| Number formats, fonts, colors and fills | Supported | Basic conversion |
+| Alignment, wrapping and dimensions | Supported | Basic conversion |
+| Merged cells | Supported | Import/export |
+| Borders | Supported | Conversion not implemented |
+| Comments | Supported | Simple notes; no threaded comments |
+| Filters, validation and conditional formatting | Engine features | Rules not preserved during conversion |
+| Excellence charts | Column, line and doughnut; up to 20 | Not exported to XLSX |
+| Group summaries | New, static aggregated sheet | Sheet values exported |
+| Excel pivot tables | Not implemented | Not preserved |
+| VBA, macros, ActiveX and add-ins | Not executed | Not preserved |
+| Power Query, Power Pivot, DAX and external connections | Not implemented | Not preserved |
+| Legacy XLS, XLSB, XLSM, ODS and encrypted files | Not supported | Unencrypted XLSX only |
+| Imported charts/images | Not supported | Not preserved |
+| Live coediting/sharing | Not implemented | Accounts isolated; session conflicts checked |
+| Paginated printing/native PDF | Not implemented | Export to a compatible pagination application |
+| Every Excel function/dynamic array | Not guaranteed | Unsupported functions may produce errors |
 
-- 30 abas; 10.000 linhas e 256 colunas por aba.
-- Até 100.000 células preenchidas por arquivo, somadas entre abas.
-- Documento persistido: até 8 MiB de JSON UTF-8. Importação: até 10 MiB; XLSX declarações ZIP de até 64 MiB descompactados.
-- 100 arquivos ou 50 MiB de documentos atuais por conta, até 100 contas por instalação.
-- Até 20 revisões por documento. O histórico usa armazenamento adicional: no pior caso, aproximadamente 1 GiB por conta além dos documentos atuais, antes de overhead do SQLite e backups. Provisione e monitore o disco.
-- IA: até 500 células enviadas, 100 alterações propostas, instrução de até 8.000 caracteres, prazo de 45 segundos.
-- CSV exporta resultados de fórmulas. Textos começando com caracteres interpretáveis como fórmulas recebem apóstrofo. CSV não preserva estilos, gráficos ou múltiplas abas.
+English is the default interface and documentation language. Brazilian
+Portuguese is available as a secondary language. Changing interface language
+does not translate existing workbook contents or change formula function names.
 
-Nomes de funções são em inglês. Os testes de navegador cobrem SUM, AVERAGE, COUNT, IF, SUMIF, VLOOKUP, IFERROR, ROUND, aritmética e referências entre abas; isso não é certificação de todas as funções do motor.
+## Limits
 
-O limite de células é uma proteção, não um benchmark de performance validado. A grade pode consumir bastante RAM com regiões grandes. Não foi certificado o desempenho no limite máximo, em dispositivos móveis ou com fórmulas profundamente encadeadas.
+- 30 sheets, each with up to 10,000 rows and 256 columns.
+- 100,000 populated cells per file, summed across sheets.
+- Persisted document: 8 MiB UTF-8 JSON. Import: 10 MiB; declared expanded XLSX
+  ZIP entries: 64 MiB.
+- Up to 100 files or 50 MiB of current documents per account; up to 100 accounts.
+- Up to 20 revisions per document. History needs additional disk space; a
+  worst-case account can use about 1 GiB beyond its current documents, before
+  SQLite and backup overhead. Monitor available storage.
+- The private assistant accepts up to 500 cells, 100 proposed changes and an
+  8,000-character instruction. External adapters time out after 45 seconds;
+  local Ollama uses a 90-second timeout and an additional 2,000-byte combined
+  task/context limit. Public demo limits are smaller; see [LLM](LLM.md).
+- CSV exports formula results. Text that could be interpreted as a formula is
+  prefixed with an apostrophe. CSV does not preserve styles, charts or sheets.
 
-Arquivos importantes devem manter seu original. A conversão pode perder recursos não modelados mesmo quando o arquivo abre sem erro. Recursos não implementados são lacunas da versão, não itens entregues como concluídos.
+Browser tests exercise SUM, AVERAGE, COUNT, IF, SUMIF, VLOOKUP, IFERROR, ROUND,
+arithmetic and cross-sheet references. This does not certify every function.
+Cell limits are protective limits, not measured performance promises. Large
+regions may consume substantial RAM; maximum-size workbooks and deeply chained
+formulas have not been qualified. Conversion may lose unmodeled features even
+when a file opens successfully.

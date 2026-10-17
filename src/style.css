@@ -1355,3 +1355,25 @@ hr:not(:where(.sheet-surface *)) {
     scroll-behavior: auto !important;
   }
 }
+.language-picker {
+  width: auto;
+  max-width: 110px;
+  min-height: 32px;
+  padding: 4px 7px;
+  font: inherit;
+  font-size: 12px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+}
+.header-actions .language-picker {
+  color: #fff;
+  background: #155d47;
+  flex-shrink: 0;
+}
+.auth-form > .language-picker {
+  align-self: flex-end;
+  margin-bottom: 16px;
+}
+@media (max-width: 480px) {
+  .header-actions .language-picker { max-width: 86px; padding-inline: 3px; }
+}

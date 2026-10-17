@@ -2,7 +2,7 @@
   "name": "excellence",
   "version": "0.1.0-rc.1",
   "private": true,
-  "description": "Excellence: planilhas livres com assist\u00eancia de IA, desktop e web",
+  "description": "Excellence: open spreadsheets with an AI assistant, desktop and web",
   "license": "MIT",
   "type": "module",
   "engines": {

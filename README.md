@@ -1,6 +1,6 @@
 # Excellence
 
-Excellence is a self-hosted spreadsheet application with a familiar command bar, formulas, private workbooks, revision history, XLSX/CSV import and export, charts, and an optional local spreadsheet assistant. The interface is in Portuguese. [Documentação em português](README.pt-BR.md).
+Excellence is a self-hosted spreadsheet application with a familiar command bar, formulas, private workbooks, revision history, XLSX/CSV import and export, charts, and an optional local spreadsheet assistant. English is the default interface and documentation language; Brazilian Portuguese is available in the language selector. [Documentação em português](README.pt-BR.md).
 
 Visit [exc.securityops.co](https://exc.securityops.co) or [try the demo](https://exc.securityops.co/demo). The [Brazilian domain](https://exc.securityops.com.br) redirects to the primary origin.
 
@@ -34,7 +34,7 @@ docker compose up -d --build
 
 Open `http://localhost:3210`. For a public deployment, set `EXCELLENCE_PUBLIC_URL` to the exact HTTPS origin and `EXCELLENCE_SECURE_COOKIE=true` before starting. Port 3210 binds to loopback by default; publish it through an HTTPS reverse proxy that preserves the public Host header. The initial one-time setup token appears in the private service log (`docker compose logs excellence`). There is no default password or public registration.
 
-The `excellence-data` volume holds accounts, files, and revision history. Keep it across container rebuilds. Use `node scripts/backup.mjs` with a protected destination and rehearse restoring a backup. See [operations in English](docs/OPERATIONS.en.md) or [Portuguese](docs/OPERATIONS.md) for the full procedure, and [compatibility](docs/COMPATIBILITY.md) for format limits.
+The `excellence-data` volume holds accounts, files, and revision history. Keep it across container rebuilds. Use `node scripts/backup.mjs` with a protected destination and rehearse restoring a backup. See [operations in English](docs/OPERATIONS.md) or [Portuguese](docs/OPERATIONS.pt-BR.md) for the full procedure, and [compatibility](docs/COMPATIBILITY.md) for format limits.
 
 ## Security and privacy
 
@@ -46,10 +46,10 @@ Excellence is MIT licensed. Third-party notices are in `THIRD_PARTY_NOTICES.txt`
 
 The local deployment uses Qwen3.5 2B, quantized to Q4_K_M, through Ollama. The model is Apache-2.0 licensed and runs on the operator's server. Only the selected cells and your request are sent to the configured model. Responses are proposed changes: review them before applying. Model output can be wrong and never runs code or macros.
 
-See [local model setup and limits](docs/LLM.en.md) ([português](docs/LLM.md)). No paid provider is required.
+See [local model setup and limits](docs/LLM.md) ([português](docs/LLM.pt-BR.md)). No paid provider is required.
 
 ## Development
 
 Source integrity is recorded with SecOps CodeMark. See [verification instructions](docs/INTEGRITY.md); private signing keys are never distributed.
 
-Node.js 24 is required. Install the locked dependencies with `npm ci --ignore-scripts`, then run `npm test` and `npm run build`. Browser checks use `npm run test:e2e`. See [operations](docs/OPERATIONS.en.md) for backups, restores and deployment updates.
+Node.js 24 is required. Install the locked dependencies with `npm ci --ignore-scripts`, then run `npm test` and `npm run build`. Browser checks use `npm run test:e2e`. See [operations](docs/OPERATIONS.md) for backups, restores and deployment updates.

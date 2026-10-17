@@ -58,6 +58,21 @@ async function admin(c) {
     password: "Long-Admin-Password-42",
   });
 }
+test('API errors default to English and honor the selected Portuguese language', async (t) => {
+  const { client } = await fixture(t);
+  const c = client();
+  for (const [header, expected, language] of [
+    ['', 'Sign in to continue.', 'en'],
+    ['pt-BR', 'Entre para continuar.', 'pt-BR'],
+    ['pt-BR;q=0.2,en;q=0.9', 'Sign in to continue.', 'en'],
+    ['pt-BR;q=0', 'Sign in to continue.', 'en'],
+  ]) {
+    const response = await c.call('/api/workbooks', 'GET', undefined, { 'accept-language': header });
+    assert.equal(response.status, 401);
+    assert.equal(response.data.error, expected);
+    assert.equal(response.headers.get('content-language'), language);
+  }
+});
 test("setup exige token, só ocorre uma vez e cookie protege sessão", async (t) => {
   const { client } = await fixture(t);
   const c = client();
@@ -239,7 +254,7 @@ test("IA local exige sessão, retorna proposta sem gravar e informa indisponibil
   assert.equal(requests, 1);
   const unavailable = await c.call("/api/ai/assist", "POST", { ...input, provider: "offline" });
   assert.equal(unavailable.status, 502);
-  assert.match(unavailable.data.error, /Ollama local indisponível/);
+  assert.match(unavailable.data.error, /Local Ollama is unavailable/);
   assert.doesNotMatch(unavailable.data.error, /127\.0\.0\.1/);
 });
 test("corpo inválido e planilha excessiva retornam erro controlado", async (t) => {
