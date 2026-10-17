@@ -3,14 +3,14 @@
     "sha256",
     "sha512"
   ],
-  "created_at": "2026-10-17T13:25:57Z",
+  "created_at": "2026-10-17T16:17:37Z",
   "excluded": [
     {
       "path": ".codemark",
       "reason": "Metadados do CodeMark"
     }
   ],
-  "file_count": 79,
+  "file_count": 80,
   "files": {
     ".dockerignore": {
       "mode": 420,
@@ -20,9 +20,9 @@
     },
     ".env.example": {
       "mode": 420,
-      "sha256": "1ee7423bf7c3318bc28293e58b541270bba6c61accfcaf6f0285bf2e3b26a33a",
-      "sha512": "0b7a74fbc9915adae5c27a1cd70028e24473c1a3493fd7793c78a1e1d2d4716ed5fa7066f90ffd75ffcf0540e2ceb0df9977aab0c150f80e71a1992cbb7a6a6b",
-      "size": 691
+      "sha256": "e265e82a99bfc862c646ba912fc4abcb1e3a06648b913520982c0c46c276149a",
+      "sha512": "ea4046353de7d017facfa91f4a89d54557873214601ae32198410a19afb30f8f5622fc7b77d2c55d4b0f562c6e0c7be051921f82d4a7c3f116db34160fa008b7",
+      "size": 950
     },
     ".github/workflows/ci.yml": {
       "mode": 420,
@@ -38,9 +38,9 @@
     },
     "CHECKSUMS.sha256": {
       "mode": 420,
-      "sha256": "35db842c1f4248d4635d1c8aff06d3d2abd04781e24a8831df67b76d447c45be",
-      "sha512": "8867c2af54bdd301351e55a32121bda781a964613342375116e3ad230daed70a1ff2526df7d54b0aef92db1e532a6f74b1b47ee619274102bed23d206486c534",
-      "size": 6764
+      "sha256": "00002efabc9282e728cc37e53047aa2b6d9b9b2f61da141391795d93db5a570c",
+      "sha512": "66d182d4ca2eb73010af15df52aff51c684d65be605938c7b4bb7df1741cbfe7a0eab2cdbf9a7183280c41ace7a730cb6451749c7a942eb2e64b3125ad3d9262",
+      "size": 6855
     },
     "Dockerfile": {
       "mode": 420,
@@ -114,17 +114,17 @@
       "sha512": "b41c8d0839c7038eb2fb219e4ea6eee554ccb7999b2ea1aa03869fad2aea3e3b2f4d06ed8d36b3ce387f84cee56d23a325396c7f7ef169330a8efcae35961c4a",
       "size": 203122
     },
-    "dist/assets/index-BoBIKzzs.js": {
+    "dist/assets/index-CLPfEmHe.css": {
       "mode": 420,
-      "sha256": "ab3e03ca11d45be6c4e6e7f033dd592082a9575598250b9b2ca107ffbe26105f",
-      "sha512": "28848f97876ddd7cee58ed90eeeb967eaef78f480d858029c7bb78e1c93df8b105593cb639b73d12289b6f0101dc9b3950d73bcce8fdde00e80fea5880e705b4",
-      "size": 268551
+      "sha256": "8d11e81fa48a0e79971946c394452c9d575347dbd187b5b18b722b60965a6507",
+      "sha512": "af54ca2380afcd12fa28400770f4fdd0b9cde9bf6bef5dbd1ecd5df0a1439c3b64ffa124a3b7775accf2d0e32ed112f78cf1179c96cfb103b07371736ddb6c12",
+      "size": 20583
     },
-    "dist/assets/index-DskqssDl.css": {
+    "dist/assets/index-DwAmcBiG.js": {
       "mode": 420,
-      "sha256": "0a4ebd3d505cc5149adae9b197a103ba20e6e6e4884b0dec8902b71d6ac8af89",
-      "sha512": "86dcb6be7e0261d8545d6a4c2819015da3ba87d83995149793d642c805bb10e07b1344e79acec84e8b64b585a5c258b05c14bbf3db7419e36e822ba633cbfe7d",
-      "size": 20377
+      "sha256": "064f29892be96e60214109b2cfd4a82aafbf02e3e35673e13db682534eafb5ef",
+      "sha512": "05ff652b67a7018078cd9013e3aa84cf9ff6373687ddba97360f2da685c003a455e8f526414c919a2cc75dcac5a4b168c4d33f89ac04babda1ec449b07c3f809",
+      "size": 268551
     },
     "dist/assets/rolldown-runtime-COiEfhsA.js": {
       "mode": 420,
@@ -132,11 +132,11 @@
       "sha512": "47889405c0a76750a29ec245c1893bdb2c448ad491651ac54b0f46acb15041fe17796481a5fe742d500cb367b53c43ee205dfa95e01fccc7069ff95bfee195f1",
       "size": 1116
     },
-    "dist/assets/spreadsheet-BGSitX-k.js": {
+    "dist/assets/spreadsheet-ClvBk9a8.js": {
       "mode": 420,
-      "sha256": "4290e8b7a4d4d5a172571602cf3ea3255b1125865aadeaa818ed76011099ae49",
-      "sha512": "842bef53f340bc23c060c0ee1a1ce0e58b3c999422bc3188d624ae9ffcdb68fc26750ca6d435b286c46aa921e90d0bbcfab8d86d194e54ce24af531f005292af",
-      "size": 2716006
+      "sha256": "9fae644f97a89a6b1eef9f86c5462e544f7c7bd3d77082877618f06452ca9758",
+      "sha512": "2a04ba18df049776793b7a0dd34339fb92e7bb088ba60c0233f9ef3926ce35f9147d6aa5feca7303ad922ee92800a2ff7e4d2d3065ab74e08c2ba30727d8e90c",
+      "size": 2716675
     },
     "dist/assets/spreadsheet-DzjiTq0c.css": {
       "mode": 420,
@@ -144,22 +144,22 @@
       "sha512": "86a72cd166ec842378b93103552cd2481f472ae9a4f021bcec9c0d021ccd0c5b9e4a22a99c6e3a21f755bf54d11de77403da68a8feb5571e3ee57f5158e09c3c",
       "size": 48951
     },
+    "dist/assets/xlsx-DIz8joBQ.js": {
+      "mode": 420,
+      "sha256": "0dec608623a415ef53a3f08d774728ede93cb19c4bad014316c0a5c2726b7f13",
+      "sha512": "6328ca87d7282abdc2d56077dda02e31edaaa3c01da0aef347896907dc5510c26dca2db0df3c89fcc7c8b353d11addd5ebd3b6c5ad0583320adc2e84900974db",
+      "size": 4374
+    },
     "dist/assets/xlsx-DoAus6Wm.js": {
       "mode": 420,
       "sha256": "a5a4e91df1898d3ccad260e7853ea705ee5059f61bceb3bfb290288f9256b073",
       "sha512": "ca7856d5c555102970e9fc1f563b6b77222ee58eef94369c6bf4cd10348984abd37b5ae4f486b1508b5cd3dec54ab40e1a9ae2ba775ad7b40020a53899b68539",
       "size": 929401
     },
-    "dist/assets/xlsx-j5Jc17NI.js": {
-      "mode": 420,
-      "sha256": "c71bb30f9440e06812ba1c47f58f7f88e7bf418ec5fec4d7b3d8e9467041a4b0",
-      "sha512": "5295c88712e714cab77705c22123a35eebfbc103aba802f6fce0d9f9d79fd29a58c44cd4f72743a5cc1c5bfc1a6fbb2472e55358222b2dc7ccdacc5045c311c5",
-      "size": 4374
-    },
     "dist/index.html": {
       "mode": 420,
-      "sha256": "a6454126b95190f7739ea5b53cd272b69d33512e0cbdd9c71be0347267d59e7a",
-      "sha512": "a5262ba9e8af2d5f8631e8daeb889f36b07c59c588aec8f2a0403d8751ebbda3c56c4f7c8683062dd01fa93e6a77e4eef56e50e0551df942490579b0613a8138",
+      "sha256": "84094af43b30869b0b5775f1ee84ddf2bf4d23e181c9101400aece4276def299",
+      "sha512": "be9d5ae7da6aa1d4c38d58c1681ce5bcad70ff832865dc3f60d418bbaf0366b4d8d916fd053e22bbddbda4a5d618ddc202074533d8fc17a500dd6b144c4b030a",
       "size": 798
     },
     "dist/trophy.svg": {
@@ -212,15 +212,15 @@
     },
     "docs/VALIDATION.md": {
       "mode": 420,
-      "sha256": "4e532c385f95b49792cf067cfb9fc8d74c48043f4abf4c11918a4c406869a9ea",
-      "sha512": "587f3bd45d87e86b64b9b00a64b444295ec44666bda81fff657fa875dd3eb3531f83c492c0f22f10b43a80bd9365e6a879b1805a1f913e25d8693eb70a3d2bbf",
-      "size": 7426
+      "sha256": "1d5e8c8275f97dbbb44bcb25ebc59a121bb3549f0b578cee3142eea82c617053",
+      "sha512": "172d77695c3e88ec5eccbd3ae799c7ce5949304dc195439f5aa01926cdc7f8adb74b3d7765d15d34ac986c28a12266557cc71b8545f93ccf6b13f951094c86fb",
+      "size": 8292
     },
     "docs/VALIDATION.pt-BR.md": {
       "mode": 420,
-      "sha256": "814b1f0edfca8348ac0382452e21989fca936ee0ea61d1811e6b83d114e78754",
-      "sha512": "9601958cbc315a8ff09fc9c3e9134ed2fb9ed2a20f26bc1f65452a7091f93b2e8b2a8929a59840ff89b7e0d459656eab8f2ebbf70d7201ec74bdbf3f23d69804",
-      "size": 12669
+      "sha256": "ee5aa6813cc2a71363938c848ce48c5d311f35ccfc8296ca456f543d49ca68cc",
+      "sha512": "87016e2f4f1fe9ba89d865cffbdba93bb424f3877a7755387e2b58bf1ae678a72da1da5eed1c1aee248e5952786da5877030404be7543c0d02234f275dffcf2c",
+      "size": 13558
     },
     "docs/dependencies.json": {
       "mode": 420,
@@ -296,9 +296,9 @@
     },
     "scripts/patch-fortune.mjs": {
       "mode": 420,
-      "sha256": "03404e2c130d1b9a96cba45f090e6a7ffc33d616ac75c57bb393bfeddca4864f",
-      "sha512": "9d5a819b7d686840fd3eb016e97ae5eca00d98d6f2ef8a0fe4c5d0369dd02a4b3beb2945ca12c2c93316ffc56e53486d44001bfdbfb06ec4eb4d5875c1c30112",
-      "size": 5711
+      "sha256": "fbfecfa4b35b9e85a914fe7a7c27f787a29d1da6854d5eaa79bf9ec46f2cded6",
+      "sha512": "8df283724c78f634e4f971faa2dc2994c4bb6f609cf79d094fb363dc1ee71f8808a08f45e629f8a9aab82ffbbdf0479bef3767582d2f3b5a4478a08172d73536",
+      "size": 10153
     },
     "server/ai-limits.mjs": {
       "mode": 420,
@@ -380,9 +380,9 @@
     },
     "src/style.css": {
       "mode": 420,
-      "sha256": "a4abd283364802db752a76914388fd8cd437db3b5d1e0b5d1da613963f9e3147",
-      "sha512": "c8d9badd265bb09be08824130fe3105f6a79dd5175001ab154dbc44dfa2dc759bfa8222433a40964bb75e26aadca1416b3b79ce8321ea5303bcecd19121d8bb0",
-      "size": 25272
+      "sha256": "fe75ba492d599f748db72ad14a28dd68a68ce64c24f39899fc055cd9cf883db7",
+      "sha512": "22ef863ebc262a3ddacbc66c85b859cb21ad8d0a83695f506b940674196a71159fab9e114d27889ece6943363a3129110218ead1140acc8e8d39ba4ea2fc26c0",
+      "size": 25661
     },
     "src/templates.mjs": {
       "mode": 420,
@@ -432,6 +432,12 @@
       "sha512": "f88acd16f6b92e2a775ab1960db0e2160dd37d04582360ae7bd2891ffe8396fd6e94153ba24c53a13708e3a8a79199485a02968db5d48f344e61a5b577e60c40",
       "size": 4559
     },
+    "tests/e2e/menus.spec.mjs": {
+      "mode": 420,
+      "sha256": "ecf3e105dea0a3bac1562e380abb5f6fde061c3404cdba514059062933429561",
+      "sha512": "3be6fd5819ed1092a5e600f2eb8d15be95bae52c42e31c78bf9c792b901fad52a7fe138b6f3815ca0d2200403ba5d6974c9d5f19d236fe0cea7a68052801c252",
+      "size": 3777
+    },
     "tests/e2e/workspace.spec.mjs": {
       "mode": 420,
       "sha256": "56899c630956b411f7678924e26e3ccd21108a304258688c26f52ca60992acec",
@@ -452,9 +458,9 @@
     },
     "tests/patch.test.mjs": {
       "mode": 420,
-      "sha256": "6065ac762533a9862ec90dbd08f10e5aeb4c65188659345b539165d379d55159",
-      "sha512": "5799a6f83e4b845a31b9d0d1c9c85d11dc169adf875720b8e3801a58a803ae85ea02cc3ffaa50c533bbfd4fd6f04887e127d924971ab097b40d251355bd3ddfb",
-      "size": 2041
+      "sha256": "cf370f36ad2d05374114e2cbe936b6c0c1e883394be14fd5a198a0be40dff4d6",
+      "sha512": "32afd1d90225e86b349a81923475b660b74a30caf600ea964d2596bc9550a78bcd80bc6d4e23a066faa4f2e231f7de608468fc09691bb28fa57820701432b761",
+      "size": 2839
     },
     "tests/save-state.test.mjs": {
       "mode": 420,
@@ -490,5 +496,5 @@
   "format": "secops-codemark-integrity-v1",
   "project_id": "2f530e98-74a9-497e-98d2-70e1f8eee6ef",
   "tool_version": "0.4.1",
-  "total_bytes": 5506189
+  "total_bytes": 5518575
 }

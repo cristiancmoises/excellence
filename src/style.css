@@ -70,6 +70,16 @@
 *:not(:where(.sheet-surface *)) {
   box-sizing: border-box;
 }
+/* Native menu coordinates are clamped by the pinned FortuneSheet integration.
+   Bound the measured box too, including narrow screens and short viewports. */
+.sheet-surface .fortune-context-menu {
+  box-sizing: border-box;
+  max-width: calc(100% - 16px);
+  max-height: calc(100% - 16px);
+}
+.sheet-surface .fortune-context-menu .luckysheet-cols-menuitem-content {
+  white-space: normal;
+}
 body {
   margin: 0;
   background: var(--bg);

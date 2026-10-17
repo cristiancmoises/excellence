@@ -1,6 +1,101 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { normalizeBooleanLiterals } from "../src/formula-input.mjs";
+// FortuneSheet 1.0.4 has no public menu-state API. Keep this integration in its
+// native component so commands, selection and undo continue using its context.
+export function patchContextMenuSource(source) {
+  const start = source.indexOf("var ContextMenu = function ContextMenu() {");
+  const end = source.indexOf("\nvar getPath = function getPath(currency)", start);
+  if (start < 0 || end < start)
+    throw Error("FortuneSheet context menu changed. Review the pinned integration.");
+  let component = source.slice(start, end);
+  if (!component.includes('className: "fortune-context-menu luckysheet-cols-menu"'))
+    throw Error("FortuneSheet context menu markup changed. Review the pinned integration.");
+  if (component.includes("function excellencePositionContextMenu()")) return source;
+  const original = `  useLayoutEffect(function () {
+    var _refs$workbookContain;
+    if (!containerRef.current) {
+      return;
+    }
+    var winH = window.innerHeight;
+    var winW = window.innerWidth;
+    var rect = containerRef.current.getBoundingClientRect();
+    var workbookRect = (_refs$workbookContain = refs.workbookContainer.current) === null || _refs$workbookContain === void 0 ? void 0 : _refs$workbookContain.getBoundingClientRect();
+    if (!workbookRect) {
+      return;
+    }
+    var menuW = rect.width;
+    var menuH = rect.height;
+    var top = contextMenu.y || 0;
+    var left = contextMenu.x || 0;
+    var hasOverflow = false;
+    if (workbookRect.left + left + menuW > winW) {
+      left -= menuW;
+      hasOverflow = true;
+    }
+    if (workbookRect.top + top + menuH > winH) {
+      top -= menuH;
+      hasOverflow = true;
+    }
+    if (top < 0) {
+      top = 0;
+      hasOverflow = true;
+    }
+    if (hasOverflow) {
+      setContext(function (draftCtx) {
+        draftCtx.contextMenu.x = left;
+        draftCtx.contextMenu.y = top;
+      });
+    }
+  }, [contextMenu.x, contextMenu.y, refs.workbookContainer, setContext]);`;
+  const replacement = `  useLayoutEffect(function () {
+    var menu = containerRef.current;
+    var workbook = refs.workbookContainer.current;
+    if (!menu || !workbook) return;
+    function excellencePositionContextMenu() {
+      var bounds = workbook.getBoundingClientRect();
+      var rect = menu.getBoundingClientRect();
+      var right = Math.min(bounds.right, window.innerWidth) - bounds.left;
+      var bottom = Math.min(bounds.bottom, window.innerHeight) - bounds.top;
+      var left = Math.max(8, Math.min(contextMenu.x || 0, right - rect.width - 8));
+      var top = Math.max(8, Math.min(contextMenu.y || 0, bottom - rect.height - 8));
+      if (left !== contextMenu.x || top !== contextMenu.y) {
+        setContext(function (draftCtx) {
+          if (_.isEmpty(draftCtx.contextMenu)) return;
+          draftCtx.contextMenu.x = left;
+          draftCtx.contextMenu.y = top;
+        }, { noHistory: true, logPatch: false });
+      }
+    }
+    function dismiss(event) {
+      if (event.type === "keydown") {
+        if (event.key !== "Escape") return;
+        event.preventDefault();
+        event.stopPropagation();
+      } else if (menu.contains(event.target)) return;
+      setContext(function (draftCtx) {
+        draftCtx.contextMenu = {};
+      }, { noHistory: true, logPatch: false });
+    }
+    excellencePositionContextMenu();
+    var observer = new ResizeObserver(excellencePositionContextMenu);
+    observer.observe(workbook);
+    observer.observe(menu);
+    window.addEventListener("resize", excellencePositionContextMenu);
+    document.addEventListener("pointerdown", dismiss, true);
+    document.addEventListener("keydown", dismiss, true);
+    return function () {
+      observer.disconnect();
+      window.removeEventListener("resize", excellencePositionContextMenu);
+      document.removeEventListener("pointerdown", dismiss, true);
+      document.removeEventListener("keydown", dismiss, true);
+    };
+  }, [contextMenu.x, contextMenu.y, refs.workbookContainer, setContext]);`;
+  if (component.split(original).length !== 2)
+    throw Error("FortuneSheet context menu positioning changed. Review the pinned integration.");
+  component = component.replace(original, replacement);
+  return source.slice(0, start) + component + source.slice(end);
+}
 const edits = [
   [
     'sessionStorage.setItem("localClipboard", plainText);',
@@ -72,12 +167,14 @@ export function patchReactSource(source) {
     if (!out.includes(original)) throw Error("FortuneSheet toolbar changed. Review the locale patch before building.");
     out = out.replace(original, localized);
   }
-  return out;
+  return patchContextMenuSource(out);
 }
 if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
   const path = "node_modules/@fortune-sheet/core/dist/index.esm.js";
   writeFileSync(path, patchSource(readFileSync(path, "utf8")));
   const reactPath = "node_modules/@fortune-sheet/react/dist/index.esm.js";
+  if (JSON.parse(readFileSync("node_modules/@fortune-sheet/react/package.json", "utf8")).version !== "1.0.4")
+    throw Error("FortuneSheet context menu integration requires reviewed version 1.0.4.");
   writeFileSync(reactPath, patchReactSource(readFileSync(reactPath, "utf8")));
   for (const format of ["es", "lib"]) {
     const dividePath =

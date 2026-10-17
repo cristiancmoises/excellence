@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { patchSource, patchReactSource } from "../scripts/patch-fortune.mjs";
+import { patchSource, patchReactSource, patchContextMenuSource } from "../scripts/patch-fortune.mjs";
 test("inserção de linhas opera sem new Function e mantém clones independentes", () => {
   const src = readFileSync(
     "node_modules/@fortune-sheet/core/dist/index.esm.js",
@@ -30,4 +30,13 @@ test("Portuguese locale registration is explicit, guarded and idempotent", () =>
   assert.ok(core.includes('if (ctx.lang === "pt-BR" && excellencePortugueseLocale) return excellencePortugueseLocale;'));
   assert.equal(patchSource(core), core);
   assert.throws(() => patchSource(core.replace("function locale(ctx)", "function changedLocale(ctx)")), /FortuneSheet/);
+});
+test("native menu integration is guarded and idempotent", () => {
+  const original = readFileSync("node_modules/@fortune-sheet/react/dist/index.esm.js", "utf8");
+  const patched = patchContextMenuSource(original);
+  assert.equal(patchContextMenuSource(patched), patched);
+  assert.ok(patched.includes("excellencePositionContextMenu"));
+  assert.ok(patched.includes("noHistory: true, logPatch: false"));
+  assert.throws(() => patchContextMenuSource(original.replace("var ContextMenu = function ContextMenu()", "var ChangedMenu = function ChangedMenu()")), /FortuneSheet context menu/);
+  assert.throws(() => patchContextMenuSource(original.replace("className: \"fortune-context-menu luckysheet-cols-menu\"", "className: \"changed-menu\"")), /FortuneSheet context menu/);
 });
