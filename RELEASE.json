@@ -18,5 +18,5 @@
     "local": "node scripts/launch.mjs",
     "docker": "docker compose up -d --build"
   },
-  "report": "docs/VALIDATION.md"
+  "documentation": "docs/OPERATIONS.md"
 }

@@ -2,7 +2,7 @@
 
 **Planilhas livres, célula por célula.** Símbolo de troféu, licença MIT e seus dados na sua infraestrutura.
 
-Versão **0.1.0-rc.1**. Inglês é o idioma padrão; português brasileiro está disponível no seletor da interface. Aplicativo funcional para homologação. Não é uma implementação integral do Microsoft Excel. Veja [compatibilidade](docs/COMPATIBILITY.pt-BR.md) e [validação](docs/VALIDATION.pt-BR.md) antes de adotar em produção.
+Versão **0.1.0-rc.1**. Inglês é o idioma padrão; português brasileiro está disponível no seletor da interface. Aplicativo funcional para homologação. Não é uma implementação integral do Microsoft Excel. Veja [compatibilidade](docs/COMPATIBILITY.pt-BR.md) e [operação](docs/OPERATIONS.pt-BR.md) antes de adotar em produção.
 
 **Acessar:** [exc.securityops.co](https://exc.securityops.co) · [exc.securityops.com.br](https://exc.securityops.com.br) · [Experimentar a demonstração](https://exc.securityops.co/demo). [English documentation](README.md).
 
@@ -94,7 +94,6 @@ O fluxo de CI para Linux e Windows e o build Docker está em `.github/workflows/
 - [Operação, proxy HTTPS, backup e restauração](docs/OPERATIONS.pt-BR.md)
 - [Integração com LLMs](docs/LLM.pt-BR.md)
 - [Compatibilidade e limites](docs/COMPATIBILITY.pt-BR.md)
-- [Relatório de validação e parecer](docs/VALIDATION.pt-BR.md)
 
 ## Licença
 

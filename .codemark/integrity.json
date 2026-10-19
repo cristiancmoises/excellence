@@ -3,20 +3,20 @@
     "sha256",
     "sha512"
   ],
-  "created_at": "2026-10-17T16:17:37Z",
+  "created_at": "2026-10-19T02:01:42Z",
   "excluded": [
     {
       "path": ".codemark",
       "reason": "Metadados do CodeMark"
     }
   ],
-  "file_count": 80,
+  "file_count": 78,
   "files": {
     ".dockerignore": {
       "mode": 420,
-      "sha256": "a1107a426416028c5eefd3caffdbcbd0a633e12ea48986b855506dfe5d88f2cc",
-      "sha512": "34a163ad973544fbcb6f149c7ed22c6c5111bd64f7fd2f8be29ddec0fbb1b6c054e32aa0fe60a90422a7522b684889ee1406451ebe00b9c6280cb168fd1a1940",
-      "size": 159
+      "sha256": "ff14f73a7fe79269be9e6788a6c406ddb56e3effd49e305b0255a857a7cd47da",
+      "sha512": "9125c0992dff3a47aa6aa0ef3e02dde44aa26b7eb23162f4067f03053f0f9bcbb31e34f4777c486277ebce3ba6e21f4ae0bcf9425e4a1255ad058c3dd4f460ed",
+      "size": 566
     },
     ".env.example": {
       "mode": 420,
@@ -32,15 +32,15 @@
     },
     ".gitignore": {
       "mode": 420,
-      "sha256": "54bfabf26c0c076cf314c78eda37d4fbbf447849b215df7f0b075353d811b7e9",
-      "sha512": "c7322bff2b0365e74de96fc81e2dc7b8641561229084a832e16bb4906b14455d50ef1ac483a4036342ade11a7e91aa83ce677e07c0976c44f84be7c4aa024f5f",
-      "size": 160
+      "sha256": "8c184b91d2f99639d678f3704015047e9fdedb4ee8cf766cf2642653706b988b",
+      "sha512": "820bdc2dba5d1e3a3b02af45a2cb20dba3ac13f57a62100c2e5a10cd9ebc910d143212c4c537416ac50c5cb1d068b0a32a7642e15e7d9f7822a07b9eaf513ae9",
+      "size": 624
     },
     "CHECKSUMS.sha256": {
       "mode": 420,
-      "sha256": "00002efabc9282e728cc37e53047aa2b6d9b9b2f61da141391795d93db5a570c",
-      "sha512": "66d182d4ca2eb73010af15df52aff51c684d65be605938c7b4bb7df1741cbfe7a0eab2cdbf9a7183280c41ace7a730cb6451749c7a942eb2e64b3125ad3d9262",
-      "size": 6855
+      "sha256": "3871b06241094160ab1a1ee4f8d5e2127b316fcc0d4d55fef3a13d612f42967c",
+      "sha512": "2ebd3fdbd79735387deb3474c3a104de2dfebdf76cbbc85f23b9a8bdfc91dca438cdd6cf427011c553ba4902c056a8d666f910431f632b4b625571e5472b1841",
+      "size": 6679
     },
     "Dockerfile": {
       "mode": 420,
@@ -68,15 +68,15 @@
     },
     "README.pt-BR.md": {
       "mode": 420,
-      "sha256": "b9c90899c22d3fb65d784ea06877c223a3770d7876e15931221241ad32a86e3b",
-      "sha512": "013103ea7598dca580adc3a8885550602b1c2efd00a0eca0656c579310ddcaf202cc28e6751f86c9124419f8af395538ab3a823cddda8e0ba2d28e9e6408b1e7",
-      "size": 5849
+      "sha256": "b03bc2a8fd53ba8ce6f71f43b6dac393d4aefbaf45963f5e84d87e0e6b046d65",
+      "sha512": "5a4ab3bfea697bfcf94ecd26d3ab3969ab27e5d5885281d084f6a06cee97c29e807968b5e45de022f3f80c9855b256bdbad19d391cf4017b36c49b42b785147a",
+      "size": 5782
     },
     "RELEASE.json": {
       "mode": 420,
-      "sha256": "23e0bf35dd2fbc610f1f10c62405e13d03513e91ef836b4b1bc7a1262dddffee",
-      "sha512": "be25e651378c034d10e7bd9937cfeb4a6f8c9d37110ba510f9df35df9d3cd7f764aac65082faa7f9f275a2929e2a9092a6365db193177fff7448df858ca7c84b",
-      "size": 637
+      "sha256": "b39d9b7c633f34fc8a67bf87f36041ae465960059c6317e864a72cc0647e323b",
+      "sha512": "efef9c4ec2c83cbc7fb3b0035e6d3f5f916530ae694e62401d62cecf4a75f042f81be3ca3bba77982286b0e287b60c8e011100917f7042132a00cd6bb5397494",
+      "size": 644
     },
     "Start-Excellence.cmd": {
       "mode": 420,
@@ -209,18 +209,6 @@
       "sha256": "931b5d629d0443d90cf073d8358d8713d7989fc3efe5735d12f28b00c0f71aa3",
       "sha512": "94938cc69a3bf796f7260d97ec8a1c47f63b82c460f742981c2a5e21731955db96f219196d9eda653f7e71b9d5394863fcbb8d2c1b12be2a6cb2d56b4a5a1762",
       "size": 4955
-    },
-    "docs/VALIDATION.md": {
-      "mode": 420,
-      "sha256": "1d5e8c8275f97dbbb44bcb25ebc59a121bb3549f0b578cee3142eea82c617053",
-      "sha512": "172d77695c3e88ec5eccbd3ae799c7ce5949304dc195439f5aa01926cdc7f8adb74b3d7765d15d34ac986c28a12266557cc71b8545f93ccf6b13f951094c86fb",
-      "size": 8292
-    },
-    "docs/VALIDATION.pt-BR.md": {
-      "mode": 420,
-      "sha256": "ee5aa6813cc2a71363938c848ce48c5d311f35ccfc8296ca456f543d49ca68cc",
-      "sha512": "87016e2f4f1fe9ba89d865cffbdba93bb424f3877a7755387e2b58bf1ae678a72da1da5eed1c1aee248e5952786da5877030404be7543c0d02234f275dffcf2c",
-      "size": 13558
     },
     "docs/dependencies.json": {
       "mode": 420,
@@ -496,5 +484,5 @@
   "format": "secops-codemark-integrity-v1",
   "project_id": "2f530e98-74a9-497e-98d2-70e1f8eee6ef",
   "tool_version": "0.4.1",
-  "total_bytes": 5518575
+  "total_bytes": 5497360
 }

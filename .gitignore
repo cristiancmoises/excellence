@@ -10,3 +10,18 @@ PROMPT*.md
 docs/superpowers/
 docs/evidence/
 docs/WORK_HANDOFF.md
+
+# Publish user documentation; keep working notes local.
+docs/**/*.[mM][dD]
+*[pP][rR][oO][mM][pP][tT]*.[mM][dD]
+[aA][gG][eE][nN][tT][sS].[mM][dD]
+[wW][oO][rR][kK]_[hH][aA][nN][dD][oO][fF][fF].[mM][dD]
+[rR][eE][lL][eE][aA][sS][eE]_[rR][eE][pP][oO][rR][tT].[mM][dD]
+[cC][oO][dD][eE]_[rR][eE][vV][iI][eE][wW].[mM][dD]
+!docs/OPERATIONS.md
+!docs/OPERATIONS.pt-BR.md
+!docs/COMPATIBILITY.md
+!docs/COMPATIBILITY.pt-BR.md
+!docs/LLM.md
+!docs/LLM.pt-BR.md
+!docs/INTEGRITY.md
